@@ -1,0 +1,2 @@
+string msg "Yo!"
+call puts msg
