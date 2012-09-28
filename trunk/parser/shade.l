@@ -9,7 +9,7 @@
 %%
 
 [ \t\n]                 ;
-"parsedbg"              
+"parsedbg"              printf("parsedbg");
 [a-zA-Z_][a-zA-Z0-9_]*  yylval.node_t = get_variable(yytext) return TIDENTIFIER;
 [0-9]+\.[0-9]*          yylval.node_t = const_double(atof(yytext)); return TDOUBLE;
 [0-9]+                  yylval.node_t = const_integer(atoi(yytext)); return TINTEGER;

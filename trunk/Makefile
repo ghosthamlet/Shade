@@ -11,3 +11,5 @@ parser:
 	gcc -c lex.yy.c -o lexer.o -Iinclude
 clean :
 	rm src/*.o
+	rm shade.tab.c lex.yy.c
+	rm *.o
