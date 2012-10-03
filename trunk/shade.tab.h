@@ -67,7 +67,9 @@ extern int yydebug;
      TPLUS = 276,
      TMINUS = 277,
      TMUL = 278,
-     TDIV = 279
+     TDIV = 279,
+     TIF = 280,
+     TWHILE = 281
    };
 #endif
 
@@ -85,7 +87,7 @@ value
 
 
 /* Line 2049 of yacc.c  */
-#line 89 "shade.tab.h"
+#line 91 "shade.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

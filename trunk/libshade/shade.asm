@@ -53,6 +53,9 @@
 		ccall getValue,%1,%2
 %endmacro
 
+%macro shget 1
+        shmov uscore,%1
+
 %macro exit 0
 		mov		ebx,0	;first syscall argument: exit code
         mov     eax,1   ;system call number (sys_exit)

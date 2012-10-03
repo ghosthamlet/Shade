@@ -22,6 +22,7 @@
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TSEMICOLON TDOT
 %token <token> TPLUS TMINUS TMUL TDIV
+%token <token> TIF TWHILE
 
 %type <node_t> atom
 %type <node_t> expr
@@ -94,10 +95,10 @@ control_structure : if {$$ = $1;}
 				  | while {$$ = $1;}
 				  ;
 
-if : 'if' TLPAREN expr TRPAREN statement {$$ = make_node(IF, $3, $5, NULL, 0);}
+if : TIF TLPAREN expr TRPAREN statement {$$ = make_node(IF, $3, $5, NULL, 0);}
    ;
 
-while : 'while' TLPAREN expr TRPAREN statement {$$ = make_node(WHILE, $3, $5, NULL, 0);}
+while : TWHILE TLPAREN expr TRPAREN statement {$$ = make_node(WHILE, $3, $5, NULL, 0);}
 	  ;
 
 statement : expr TSEMICOLON {$$ = $1;}

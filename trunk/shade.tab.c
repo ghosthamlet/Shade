@@ -130,7 +130,9 @@ extern int yydebug;
      TPLUS = 276,
      TMINUS = 277,
      TMUL = 278,
-     TDIV = 279
+     TDIV = 279,
+     TIF = 280,
+     TWHILE = 281
    };
 #endif
 
@@ -148,7 +150,7 @@ value
 
 
 /* Line 350 of yacc.c  */
-#line 152 "shade.tab.c"
+#line 154 "shade.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -176,7 +178,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 353 of yacc.c  */
-#line 180 "shade.tab.c"
+#line 182 "shade.tab.c"
 
 #ifdef short
 # undef short
@@ -409,7 +411,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   279
+#define YYMAXUTOK   281
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -427,8 +429,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,    25,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    26,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -444,7 +446,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26
 };
 
 #if YYDEBUG
@@ -474,10 +477,10 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    43,    43,    44,    45,    48,    49,    81,    84,    85,
-      86,    89,    89,    89,    89,    89,    89,    90,    90,    90,
-      90,    93,    94,    97,   100,   103,   104,   105,   108,   109,
-     112,   113
+       0,    44,    44,    45,    46,    49,    50,    82,    85,    86,
+      87,    90,    90,    90,    90,    90,    90,    91,    91,    91,
+      91,    94,    95,    98,   101,   104,   105,   106,   109,   110,
+     113,   114
 };
 #endif
 
@@ -489,7 +492,7 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "END", "TIDENTIFIER", "TDOUBLE",
   "TINTEGER", "TCEQ", "TCNE", "TCLT", "TCLE", "TCGT", "TCGE", "TEQUAL",
   "TLPAREN", "TRPAREN", "TLBRACE", "TRBRACE", "TCOMMA", "TSEMICOLON",
-  "TDOT", "TPLUS", "TMINUS", "TMUL", "TDIV", "'i'", "'w'", "$accept",
+  "TDOT", "TPLUS", "TMINUS", "TMUL", "TDIV", "TIF", "TWHILE", "$accept",
   "atom", "expr", "expr_list", "operator", "control_structure", "if",
   "while", "statement", "statement_list", "program", YY_NULL
 };
@@ -502,7 +505,7 @@ static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278,   279,   105,   119
+     275,   276,   277,   278,   279,   280,   281
 };
 # endif
 
@@ -1437,13 +1440,13 @@ yyreduce:
     {
         case 5:
 /* Line 1787 of yacc.c  */
-#line 48 "parser/shade.y"
+#line 49 "parser/shade.y"
     {(yyval.node_t) = (yyvsp[(1) - (1)].node_t);}
     break;
 
   case 6:
 /* Line 1787 of yacc.c  */
-#line 49 "parser/shade.y"
+#line 50 "parser/shade.y"
     {switch ((yyvsp[(2) - (3)].token)) {
 case TPLUS:
 	(yyval.node_t) = make_node(PLUS, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
@@ -1480,97 +1483,97 @@ case TCGE:
 
   case 7:
 /* Line 1787 of yacc.c  */
-#line 81 "parser/shade.y"
+#line 82 "parser/shade.y"
     {(yyval.node_t) = make_node(CALL_FUNCTION, (yyvsp[(3) - (4)].node_t), NULL, NULL, 0);}
     break;
 
   case 8:
 /* Line 1787 of yacc.c  */
-#line 84 "parser/shade.y"
+#line 85 "parser/shade.y"
     {(yyval.node_t) = make_node(EXPRESSION_LIST, NULL, NULL, NULL, 0);}
     break;
 
   case 9:
 /* Line 1787 of yacc.c  */
-#line 85 "parser/shade.y"
+#line 86 "parser/shade.y"
     {(yyval.node_t) = make_node(EXPRESSION_LIST, (yyvsp[(1) - (1)].node_t), NULL, NULL, 0);}
     break;
 
   case 10:
 /* Line 1787 of yacc.c  */
-#line 86 "parser/shade.y"
+#line 87 "parser/shade.y"
     {(yyval.node_t) = make_node(EXPRESSION_LIST, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);}
     break;
 
   case 21:
 /* Line 1787 of yacc.c  */
-#line 93 "parser/shade.y"
+#line 94 "parser/shade.y"
     {(yyval.node_t) = (yyvsp[(1) - (1)].node_t);}
     break;
 
   case 22:
 /* Line 1787 of yacc.c  */
-#line 94 "parser/shade.y"
+#line 95 "parser/shade.y"
     {(yyval.node_t) = (yyvsp[(1) - (1)].node_t);}
     break;
 
   case 23:
 /* Line 1787 of yacc.c  */
-#line 97 "parser/shade.y"
+#line 98 "parser/shade.y"
     {(yyval.node_t) = make_node(IF, (yyvsp[(3) - (5)].node_t), (yyvsp[(5) - (5)].node_t), NULL, 0);}
     break;
 
   case 24:
 /* Line 1787 of yacc.c  */
-#line 100 "parser/shade.y"
+#line 101 "parser/shade.y"
     {(yyval.node_t) = make_node(WHILE, (yyvsp[(3) - (5)].node_t), (yyvsp[(5) - (5)].node_t), NULL, 0);}
     break;
 
   case 25:
 /* Line 1787 of yacc.c  */
-#line 103 "parser/shade.y"
+#line 104 "parser/shade.y"
     {(yyval.node_t) = (yyvsp[(1) - (2)].node_t);}
     break;
 
   case 26:
 /* Line 1787 of yacc.c  */
-#line 104 "parser/shade.y"
+#line 105 "parser/shade.y"
     {(yyval.node_t) = (yyvsp[(1) - (1)].node_t);}
     break;
 
   case 27:
 /* Line 1787 of yacc.c  */
-#line 105 "parser/shade.y"
+#line 106 "parser/shade.y"
     {(yyval.node_t) = make_node(BLOCK, (yyvsp[(2) - (3)].node_t), NULL, NULL, 0);}
     break;
 
   case 28:
 /* Line 1787 of yacc.c  */
-#line 108 "parser/shade.y"
+#line 109 "parser/shade.y"
     {(yyval.node_t) = make_node(STATEMENT_LIST, NULL, NULL, NULL, 0);}
     break;
 
   case 29:
 /* Line 1787 of yacc.c  */
-#line 109 "parser/shade.y"
+#line 110 "parser/shade.y"
     {(yyval.node_t) = make_node(STATEMENT_LIST, (yyvsp[(1) - (2)].node_t), (yyvsp[(2) - (2)].node_t), NULL, 0);}
     break;
 
   case 30:
 /* Line 1787 of yacc.c  */
-#line 112 "parser/shade.y"
+#line 113 "parser/shade.y"
     {(yyval.node_t) = ROOT_NODE = make_node(MAIN_PROGRAM, NULL, NULL, NULL, 0); YYACCEPT;}
     break;
 
   case 31:
 /* Line 1787 of yacc.c  */
-#line 113 "parser/shade.y"
+#line 114 "parser/shade.y"
     {(yyval.node_t) = ROOT_NODE = make_node(MAIN_PROGRAM, (yyvsp[(1) - (1)].node_t), NULL, NULL, 0); YYACCEPT;}
     break;
 
 
 /* Line 1787 of yacc.c  */
-#line 1574 "shade.tab.c"
+#line 1577 "shade.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1800,5 +1803,5 @@ yyreturn:
 
 
 /* Line 2048 of yacc.c  */
-#line 115 "parser/shade.y"
+#line 116 "parser/shade.y"
 
