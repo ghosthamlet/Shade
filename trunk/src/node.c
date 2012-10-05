@@ -10,6 +10,7 @@ node *make_node(instruction ins, node *arg1, node *arg2, void *val, size_t type_
 		//	memcpy(r->val, val, type_size);
 		//}
 		r->val = val;
+        if (r->val != NULL) printf("r->val=%d\n", *((int *) r->val));
 		return r;
 	}
 	printf("Failure in make_node");

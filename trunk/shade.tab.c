@@ -70,7 +70,7 @@
 	extern int yylex();
 	void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 	extern node *ROOT_NODE;
-	yydebug = 1;
+	//yydebug = 1;
 
 /* Line 336 of yacc.c  */
 #line 77 "shade.tab.c"
