@@ -7,7 +7,7 @@ node *make_node(instruction ins, node *arg1, node *arg2, int ival, char *strval)
 		r->arg1 = arg1;
 		r->arg2 = arg2;
 		r->ival = ival;
-        r->strval = strval;
+		r->strval = strval;
 		return r;
 	}
 	printf("Failure in make_node");

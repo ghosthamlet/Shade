@@ -86,38 +86,43 @@ class cFuncWrapper : public object {
 map<string, object *> globals;
 extern "C" {
 void setValueInt(const char *to, int *val){
-	//~ printf("set: %d\n", globals.count(to));
+	printf("setValueInt: %d\n", globals.count(to));
 	globals[to] = new cObject<int *>(val);
 }
 void setValueString(const char *to, const char *val){
-	//~ printf("set: %s, %s\n", to, val);
-	//~ printf("set: %d\n", globals.count(to));
+	printf("setValueString: %s, %s\n", to, val);
+	printf("setValueString: %d\n", globals.count(to));
 	globals[to] = new cObject<const char *>(val);
-	//~ printf("set 1: %d\n", globals.count(to));
+	printf("setValueString 1: %d\n", globals.count(to));
 }
 void getValue(const char *to, const char *name){
-	//~ printf("get: %d\n", globals.count(to));
+	printf("getValue: %d\n", globals.count(to));
+    printf("getValue: name=%d\n", name);
 	globals[to] = globals[name];
 }
 void getAttr(const char *to, const char *name, const char *attr){
-	//~ printf("get: %d\n", globals.count(to));
+	printf("getAttr: %d\n", globals.count(to));
 	globals[to] = globals[name]->getAttr(attr);
 }
 void setAttr(const char *to, const char *attr, const char *name){
-	//~ printf("set: %d\n", globals.count(to));
+	printf("setAttr: %d\n", globals.count(to));
 	globals[to]->setAttr(attr, globals[name]);
 }
 void callFreeFunction0Arg(const char *to, const char *name){
-	//~ printf("call: %d\n", globals.count(to));
+	printf("callFreeFunction0Arg: %d\n", globals.count(to));
 	globals[to] = globals[name]->call();
 }
 void callFreeFunction1Arg(const char *to, const char *name, const char *arg1){
-	//~ printf("call: %s, %s, %s\n", to, name, arg1);
-	//~ printf("call: %d\n", globals.count(arg1));
+	printf("callFreeFunction1Arg: %s, %s, %s\n", to, name, arg1);
+	printf("callFreeFunction1Arg: %d\n", globals.count(arg1));
 	globals[to] = globals[name]->call(globals[arg1]);
-	//~ printf("call 1: %d\n", globals.count(arg1));
+	printf("callFreeFunction1Arg 1: %d\n", globals.count(arg1));
 }
 void callFreeFunction2Arg(const char *to, const char *name, const char *arg1, const char *arg2){
+    printf("callFreeFunction2Arg: %s, %s, %s, %s\n", to, name, arg1, arg2);
+    printf("globals.count(arg1)=%d\n", globals.count(arg1));
+    printf("globals[arg1]=%d\n", globals[arg1]->getValue());
+    printf("globals.count(arg2)=%d\n", globals.count(arg2));
 	globals[to] = globals[name]->call(globals[arg1], globals[arg2]);
 }
 void callFreeFunction3Arg(const char *to, const char *name, const char *arg1, const char *arg2, const char *arg3){

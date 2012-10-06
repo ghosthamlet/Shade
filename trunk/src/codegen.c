@@ -6,5 +6,7 @@ node *ROOT_NODE;
 int main() {
 	yyparse();
 	printf("ROOT_NODE: ins = %d, arg1 = %d, arg2 = %d\n", ROOT_NODE->ins, ROOT_NODE->arg1, ROOT_NODE->arg2);
-    parse_node(ROOT_NODE);
+	parse_node(ROOT_NODE);
+	system("nasm -f elf a.out.asm");
+	system("g++ a.out.o -L. -lshade");
 }

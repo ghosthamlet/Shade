@@ -18,7 +18,13 @@
 %macro shdata 0
 		defdata
 		string uscore,"_" ;The underscore is used as the default variable to store a result in.
-		string puts,"puts"
+        string _a0,"_a0"
+        string _a1,"_a1"
+        string _a2,"_a2"
+        string _a3,"_a3"
+        string _a4,"_a4"
+        string _a5,"_a5"
+		string add,"add"
 %endmacro
 
 %macro shbss 0
@@ -51,6 +57,10 @@
 
 %macro shmov 2
 		ccall getValue,%1,%2
+%endmacro
+
+%macro shget 1
+        shmov uscore,%1
 %endmacro
 
 %macro exit 0

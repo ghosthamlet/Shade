@@ -2,8 +2,8 @@ OBJECTS = src/codegen.o src/node.o src/treewalker.o src/gen.o
 CFLAGS = "-Iinclude"
 all : parser $(OBJECTS)
 	gcc $(OBJECTS) parser.o lexer.o -g -Wall -o shade
-lib: libshade/libshade.cpp
-	g++ libshade/libshade.cpp -o libshade.o -c -g
+lib: libshade.cpp
+	g++ libshade.cpp -o libshade.so -c -g -fPIC -shared
 parser: parser/shade.y parser/shade.l
 	bison -d parser/shade.y
 	flex -d parser/shade.l
