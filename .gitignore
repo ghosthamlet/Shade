@@ -1,5 +1,8 @@
 *.swp
 *.o
-a.out
+a.out*
 *.so
 *.a
+lex.yy.c
+shade.tab.c
+shade.tab.h
