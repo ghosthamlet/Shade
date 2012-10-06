@@ -1,7 +1,0 @@
-Reproduce- it shoot point to the ball
-Consume resources-it shoot
-Move on its own - fiy
-Growth+ development- shoot more point at same time
-respond- if touch ground it crash
-self regulations-more energy more speed
-adaptive power- shoot more way at same time by killing the balls
