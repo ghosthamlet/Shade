@@ -49,42 +49,42 @@ atom : TDOUBLE
 expr : atom {$$ = $1;}
 	 | expr operator expr {switch ($2) {
 case TPLUS:
-	$$ = make_node(PLUS, $1, $3, NULL, 0);
+	$$ = make_node(PLUS, $1, $3, 0, NULL);
 	break;
 case TMINUS:
-	$$ = make_node(MINUS, $1, $3, NULL, 0);
+	$$ = make_node(MINUS, $1, $3, 0, NULL);
 	break;
 case TMUL:
-	$$ = make_node(MUL, $1, $3, NULL, 0);
+	$$ = make_node(MUL, $1, $3, 0, NULL);
 	break;
 case TDIV:
-	$$ = make_node(DIV, $1, $3, NULL, 0);
+	$$ = make_node(DIV, $1, $3, 0, NULL);
 	break;
 case TCEQ:
-	$$ = make_node(EQ, $1, $3, NULL, 0);
+	$$ = make_node(EQ, $1, $3, 0, NULL);
 	break;
 case TCNE:
-	$$ = make_node(NE, $1, $3, NULL, 0);
+	$$ = make_node(NE, $1, $3, 0, NULL);
 	break;
 case TCLT:
-	$$ = make_node(LT, $1, $3, NULL, 0);
+	$$ = make_node(LT, $1, $3, 0, NULL);
 	break;
 case TCLE:
-	$$ = make_node(LE, $1, $3, NULL, 0);
+	$$ = make_node(LE, $1, $3, 0, NULL);
 	break;
 case TCGT:
-	$$ = make_node(GT, $1, $3, NULL, 0);
+	$$ = make_node(GT, $1, $3, 0, NULL);
 	break;
 case TCGE:
-	$$ = make_node(GE, $1, $3, NULL, 0);
+	$$ = make_node(GE, $1, $3, 0, NULL);
 	break;
 };}
-	 | expr TLPAREN expr_list TRPAREN {$$ = make_node(CALL_FUNCTION, $3, NULL, NULL, 0);}
+	 | expr TLPAREN expr_list TRPAREN {$$ = make_node(CALL_FUNCTION, $3, NULL, 0, NULL);}
 	 ;
 
-expr_list : /* blank */ {$$ = make_node(EXPRESSION_LIST, NULL, NULL, NULL, 0);}
-		  | expr {$$ = make_node(EXPRESSION_LIST, $1, NULL, NULL, 0);}
-		  | expr TCOMMA expr_list {$$ = make_node(EXPRESSION_LIST, $1, $3, NULL, 0);}
+expr_list : /* blank */ {$$ = make_node(EXPRESSION_LIST, NULL, NULL, 0, NULL);}
+		  | expr {$$ = make_node(EXPRESSION_LIST, $1, NULL, 0, NULL);}
+		  | expr TCOMMA expr_list {$$ = make_node(EXPRESSION_LIST, $1, $3, 0, NULL);}
 		  ;
 
 operator : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE
@@ -95,22 +95,22 @@ control_structure : if {$$ = $1;}
 				  | while {$$ = $1;}
 				  ;
 
-if : TIF TLPAREN expr TRPAREN statement {$$ = make_node(IF, $3, $5, NULL, 0);}
+if : TIF TLPAREN expr TRPAREN statement {$$ = make_node(IF, $3, $5, 0, NULL);}
    ;
 
-while : TWHILE TLPAREN expr TRPAREN statement {$$ = make_node(WHILE, $3, $5, NULL, 0);}
+while : TWHILE TLPAREN expr TRPAREN statement {$$ = make_node(WHILE, $3, $5, 0, NULL);}
 	  ;
 
 statement : expr TSEMICOLON {$$ = $1;}
 		  | control_structure {$$ = $1;}
-		  | TLBRACE statement_list TRBRACE {$$ = make_node(BLOCK, $2, NULL, NULL, 0);}
+		  | TLBRACE statement_list TRBRACE {$$ = make_node(BLOCK, $2, NULL, 0, NULL);}
 		  ;
 
-statement_list : /* blank */ {$$ = make_node(STATEMENT_LIST, NULL, NULL, NULL, 0);}
-			   | statement statement_list {$$ = make_node(STATEMENT_LIST, $1, $2, NULL, 0);}
+statement_list : /* blank */ {$$ = make_node(STATEMENT_LIST, NULL, NULL, 0, NULL);}
+			   | statement statement_list {$$ = make_node(STATEMENT_LIST, $1, $2, 0, NULL);}
 			   ;
 
-program : /* blank */ {$$ = ROOT_NODE = make_node(MAIN_PROGRAM, NULL, NULL, NULL, 0); YYACCEPT;}
-		| statement {$$ = ROOT_NODE = make_node(MAIN_PROGRAM, $1, NULL, NULL, 0); YYACCEPT;}
+program : /* blank */ {$$ = ROOT_NODE = make_node(MAIN_PROGRAM, NULL, NULL, 0, NULL); YYACCEPT;}
+		| statement {$$ = ROOT_NODE = make_node(MAIN_PROGRAM, $1, NULL, 0, NULL); YYACCEPT;}
 		;
 %%

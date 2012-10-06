@@ -1,7 +1,9 @@
 #include "treewalker.h"
 void parse_node(node *n) {
     printf("NODE: ins = %d, arg1 = %d, arg2 = %d\n", n->ins, n->arg1, n->arg2);
-    char *sprintf_fodder = (char *) malloc(sizeof(char) * 1024);
+    char sprintf_fodder[100];
+    int temp1;
+    int temp2;
 	switch (n->ins) {
 		case MAIN_PROGRAM:
             start_generation();
@@ -44,15 +46,15 @@ void parse_node(node *n) {
             //TODO: IMPLEMENT
 			break;
 		case CONST_INTEGER:
-            printf("CONST_INTEGER: val=%d\n", *((int *) (n->val)));
-            push_int(*((int *) (n->val)));
+            printf("CONST_INTEGER: val=%d\n", n->ival);
+            push_int(n->ival);
 			break;
 		case CONST_DOUBLE:
             //TODO: IMPLEMENT
             //push_const_double(*((int *) (n->val)));
 			break;
 		case GET_VARIABLE:
-            sprintf(sprintf_fodder, "shget %s", *((char *) (n->val))); 
+            sprintf(sprintf_fodder, "shget %s", n->strval); 
             generate_line(sprintf_fodder);
 			break;
 		case CALL_FUNCTION:
@@ -68,56 +70,105 @@ void parse_node(node *n) {
             //TODO: IMPLEMENT
 			break;
 		case PLUS:
-            parse_node(n->arg1);
-            parse_node(n->arg2);
             printf("PLUS: arg1->ins=%d, arg2->ins=%d\n", n->arg1->ins, n->arg2->ins);
-            printf("PLUS: arg1=%d, arg2=%d\n", *((int *) (n->arg1->val)), *((int *) (n->arg2->val)));
-            generate_line("shcall add");
+            printf("PLUS: arg1=%d, arg2=%d\n", n->arg1->ival, n->arg2->ival);
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall add,_a%d,_a%d", temp1, temp2);
+            generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case MINUS:
-            sprintf(sprintf_fodder, "shcall sub,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall sub,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case MUL:
-            sprintf(sprintf_fodder, "shcall mul,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall mul,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case DIV:
-            sprintf(sprintf_fodder, "shcall div,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall div,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case EQ:
-            sprintf(sprintf_fodder, "shcall eq,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall eq,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case NE:
-            sprintf(sprintf_fodder, "shcall ne,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall ne,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case LT:
-            sprintf(sprintf_fodder, "shcall lt,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall lt,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case LE:
-            sprintf(sprintf_fodder, "shcall le,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall le,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case GT:
-            sprintf(sprintf_fodder, "shcall gt,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall gt,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 		case GE:
-            sprintf(sprintf_fodder, "shcall ge,%d,%d", *((int *) (n->val)), *((int *) (n->val)));
+            temp1 = get_argn();
+            parse_node(n->arg1);
+            temp2 = get_argn();
+            parse_node(n->arg2);
+            sprintf(sprintf_fodder, "shcall ge,_a%d,_a%d", temp1, temp2);
             generate_line(sprintf_fodder);
+            dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
             push_name("uscore");
 			break;
 	}

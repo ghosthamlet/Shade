@@ -1449,34 +1449,34 @@ yyreduce:
 #line 50 "parser/shade.y"
     {switch ((yyvsp[(2) - (3)].token)) {
 case TPLUS:
-	(yyval.node_t) = make_node(PLUS, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(PLUS, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TMINUS:
-	(yyval.node_t) = make_node(MINUS, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(MINUS, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TMUL:
-	(yyval.node_t) = make_node(MUL, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(MUL, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TDIV:
-	(yyval.node_t) = make_node(DIV, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(DIV, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TCEQ:
-	(yyval.node_t) = make_node(EQ, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(EQ, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TCNE:
-	(yyval.node_t) = make_node(NE, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(NE, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TCLT:
-	(yyval.node_t) = make_node(LT, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(LT, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TCLE:
-	(yyval.node_t) = make_node(LE, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(LE, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TCGT:
-	(yyval.node_t) = make_node(GT, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(GT, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 case TCGE:
-	(yyval.node_t) = make_node(GE, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);
+	(yyval.node_t) = make_node(GE, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);
 	break;
 };}
     break;
@@ -1484,25 +1484,25 @@ case TCGE:
   case 7:
 /* Line 1787 of yacc.c  */
 #line 82 "parser/shade.y"
-    {(yyval.node_t) = make_node(CALL_FUNCTION, (yyvsp[(3) - (4)].node_t), NULL, NULL, 0);}
+    {(yyval.node_t) = make_node(CALL_FUNCTION, (yyvsp[(3) - (4)].node_t), NULL, 0, NULL);}
     break;
 
   case 8:
 /* Line 1787 of yacc.c  */
 #line 85 "parser/shade.y"
-    {(yyval.node_t) = make_node(EXPRESSION_LIST, NULL, NULL, NULL, 0);}
+    {(yyval.node_t) = make_node(EXPRESSION_LIST, NULL, NULL, 0, NULL);}
     break;
 
   case 9:
 /* Line 1787 of yacc.c  */
 #line 86 "parser/shade.y"
-    {(yyval.node_t) = make_node(EXPRESSION_LIST, (yyvsp[(1) - (1)].node_t), NULL, NULL, 0);}
+    {(yyval.node_t) = make_node(EXPRESSION_LIST, (yyvsp[(1) - (1)].node_t), NULL, 0, NULL);}
     break;
 
   case 10:
 /* Line 1787 of yacc.c  */
 #line 87 "parser/shade.y"
-    {(yyval.node_t) = make_node(EXPRESSION_LIST, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), NULL, 0);}
+    {(yyval.node_t) = make_node(EXPRESSION_LIST, (yyvsp[(1) - (3)].node_t), (yyvsp[(3) - (3)].node_t), 0, NULL);}
     break;
 
   case 21:
@@ -1520,13 +1520,13 @@ case TCGE:
   case 23:
 /* Line 1787 of yacc.c  */
 #line 98 "parser/shade.y"
-    {(yyval.node_t) = make_node(IF, (yyvsp[(3) - (5)].node_t), (yyvsp[(5) - (5)].node_t), NULL, 0);}
+    {(yyval.node_t) = make_node(IF, (yyvsp[(3) - (5)].node_t), (yyvsp[(5) - (5)].node_t), 0, NULL);}
     break;
 
   case 24:
 /* Line 1787 of yacc.c  */
 #line 101 "parser/shade.y"
-    {(yyval.node_t) = make_node(WHILE, (yyvsp[(3) - (5)].node_t), (yyvsp[(5) - (5)].node_t), NULL, 0);}
+    {(yyval.node_t) = make_node(WHILE, (yyvsp[(3) - (5)].node_t), (yyvsp[(5) - (5)].node_t), 0, NULL);}
     break;
 
   case 25:
@@ -1544,31 +1544,31 @@ case TCGE:
   case 27:
 /* Line 1787 of yacc.c  */
 #line 106 "parser/shade.y"
-    {(yyval.node_t) = make_node(BLOCK, (yyvsp[(2) - (3)].node_t), NULL, NULL, 0);}
+    {(yyval.node_t) = make_node(BLOCK, (yyvsp[(2) - (3)].node_t), NULL, 0, NULL);}
     break;
 
   case 28:
 /* Line 1787 of yacc.c  */
 #line 109 "parser/shade.y"
-    {(yyval.node_t) = make_node(STATEMENT_LIST, NULL, NULL, NULL, 0);}
+    {(yyval.node_t) = make_node(STATEMENT_LIST, NULL, NULL, 0, NULL);}
     break;
 
   case 29:
 /* Line 1787 of yacc.c  */
 #line 110 "parser/shade.y"
-    {(yyval.node_t) = make_node(STATEMENT_LIST, (yyvsp[(1) - (2)].node_t), (yyvsp[(2) - (2)].node_t), NULL, 0);}
+    {(yyval.node_t) = make_node(STATEMENT_LIST, (yyvsp[(1) - (2)].node_t), (yyvsp[(2) - (2)].node_t), 0, NULL);}
     break;
 
   case 30:
 /* Line 1787 of yacc.c  */
 #line 113 "parser/shade.y"
-    {(yyval.node_t) = ROOT_NODE = make_node(MAIN_PROGRAM, NULL, NULL, NULL, 0); YYACCEPT;}
+    {(yyval.node_t) = ROOT_NODE = make_node(MAIN_PROGRAM, NULL, NULL, 0, NULL); YYACCEPT;}
     break;
 
   case 31:
 /* Line 1787 of yacc.c  */
 #line 114 "parser/shade.y"
-    {(yyval.node_t) = ROOT_NODE = make_node(MAIN_PROGRAM, (yyvsp[(1) - (1)].node_t), NULL, NULL, 0); YYACCEPT;}
+    {(yyval.node_t) = ROOT_NODE = make_node(MAIN_PROGRAM, (yyvsp[(1) - (1)].node_t), NULL, 0, NULL); YYACCEPT;}
     break;
 
 

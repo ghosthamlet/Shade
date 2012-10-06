@@ -36,12 +36,12 @@ typedef struct node {
 	instruction ins;
 	struct node *arg1;
 	struct node *arg2;
-	void *val;
+	int ival;
+	char *strval;
 } node;
 
-node *make_node(instruction ins, node *arg1, node *arg2, void *val, size_t type_size);
-node *const_double(double val);
+node *make_node(instruction ins, node *arg1, node *arg2, int val, char *strval);
 node *const_integer(int val);
-node *get_variable(const char *name);
+node *get_variable(char *name);
 
 #endif

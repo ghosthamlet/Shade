@@ -3,7 +3,7 @@ CFLAGS = "-Iinclude"
 all : parser $(OBJECTS)
 	gcc $(OBJECTS) parser.o lexer.o -g -Wall -o shade
 lib: libshade/libshade.cpp
-	g++ libshade/libshade.cpp -o libshade.o -c
+	g++ libshade/libshade.cpp -o libshade.o -c -g
 parser: parser/shade.y parser/shade.l
 	bison -d parser/shade.y
 	flex -d parser/shade.l
