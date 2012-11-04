@@ -49,8 +49,9 @@ stmts : stmt {$$ = make_node(STATEMENT_LIST, $1, NULL, 0, NULL);}
       | stmts stmt {$1->arg2 = make_node(STATEMENT_LIST, $2, NULL, 0, NULL);}
       ;
 
-stmt : var_decl TSEMICOLON
+stmt : var_decl TSEMICOLON {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
      | expr TSEMICOLON {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
+     | block {$$ = $1;}
      ;
 
 block : TLBRACE stmts TRBRACE {$$ = make_node(BLOCK, $2, NULL, 0, NULL);}

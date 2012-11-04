@@ -28,6 +28,9 @@ void parse_node(node *n) {
 		case STATEMENT_LIST:
 			if (n->arg1 != NULL) {
 				parse_node(n->arg1);
+				if (n->arg2 != NULL) {
+					parse_node(n->arg2);
+				}
 			}
 			break;
 		case STATEMENT:
