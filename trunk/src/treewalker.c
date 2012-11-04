@@ -1,4 +1,13 @@
 #include "treewalker.h"
+
+#define BIN_OP(op) \
+	parse_node(n->arg1);\
+	parse_node(n->arg2);\
+	generate_line("pop eax");\
+	generate_line("pop ebx");\
+	generate_line(op " eax,ebx");\
+	generate_line("push eax")
+
 void parse_node(node *n) {
 	printf("NODE: ins = %d, arg1 = %d, arg2 = %d\n", n->ins, n->arg1, n->arg2);
 	char sprintf_fodder[100];
@@ -18,10 +27,11 @@ void parse_node(node *n) {
 			break;
 		case STATEMENT_LIST:
 			if (n->arg1 != NULL) {
-				assert(n->arg2 != NULL);
 				parse_node(n->arg1);
-				parse_node(n->arg2);
 			}
+			break;
+		case STATEMENT:
+			parse_node(n->arg1);
 			break;
 		case EXPRESSION_LIST:
 			if (n->arg1 != NULL) {
@@ -37,13 +47,7 @@ void parse_node(node *n) {
 			//for lexical scoping.
 			parse_node(n->arg1);
 			break;
-		case DECLARE_INTEGER:
-			//TODO: IMPLEMENT
-			break;
-		case DECLARE_DOUBLE:
-			//TODO: IMPLEMENT
-			break;
-		case DECLARE_STRING:
+		case DECLARE_VAR:
 			//TODO: IMPLEMENT
 			break;
 		case CONST_INTEGER:
@@ -59,7 +63,10 @@ void parse_node(node *n) {
 			generate_line(sprintf_fodder);
 			break;
 		case CALL_FUNCTION:
-			//TODO: IMPLEMENT
+			parse_node(n->arg2);
+			sprintf(sprintf_fodder, "call %s", n->arg1->strval);
+			generate_line(sprintf_fodder);
+			generate_line("push eax");
 			break;
 		case ASSIGN:
 			//TODO: IMPLEMENT
@@ -71,106 +78,70 @@ void parse_node(node *n) {
 			//TODO: IMPLEMENT
 			break;
 		case PLUS:
-			printf("PLUS: arg1->ins=%d, arg2->ins=%d\n", n->arg1->ins, n->arg2->ins);
-			printf("PLUS: arg1=%d, arg2=%d\n", n->arg1->ival, n->arg2->ival);
-			temp1 = get_argn();
-			parse_node(n->arg1);
-			temp2 = get_argn();
-			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall add,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			BIN_OP("add");
 			break;
 		case MINUS:
-			temp1 = get_argn();
-			parse_node(n->arg1);
-			temp2 = get_argn();
-			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall sub,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			BIN_OP("sub");
 			break;
 		case MUL:
-			temp1 = get_argn();
-			parse_node(n->arg1);
-			temp2 = get_argn();
-			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall mul,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			BIN_OP("imul");
 			break;
 		case DIV:
-			temp1 = get_argn();
-			parse_node(n->arg1);
-			temp2 = get_argn();
-			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall div,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			BIN_OP("idiv");
 			break;
 		case EQ:
-			temp1 = get_argn();
 			parse_node(n->arg1);
-			temp2 = get_argn();
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall eq,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			generate_line("pop eax");
+			generate_line("pop ebx");
+			generate_line("cmp eax,ebx");
+			generate_line("sete al");
+			generate_line("movsx eax,al");
 			break;
 		case NE:
-			temp1 = get_argn();
 			parse_node(n->arg1);
-			temp2 = get_argn();
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall ne,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			generate_line("pop eax");
+			generate_line("pop ebx");
+			generate_line("cmp eax,ebx");
+			generate_line("setne al");
+			generate_line("movsx eax,al");
 			break;
 		case LT:
-			temp1 = get_argn();
 			parse_node(n->arg1);
-			temp2 = get_argn();
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall lt,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			generate_line("pop eax");
+			generate_line("pop ebx");
+			generate_line("cmp eax,ebx");
+			generate_line("setl al");
+			generate_line("movsx eax,al");
 			break;
 		case LE:
-			temp1 = get_argn();
 			parse_node(n->arg1);
-			temp2 = get_argn();
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall le,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			generate_line("pop eax");
+			generate_line("pop ebx");
+			generate_line("cmp eax,ebx");
+			generate_line("setle al");
+			generate_line("movsx eax,al");
 			break;
 		case GT:
-			temp1 = get_argn();
 			parse_node(n->arg1);
-			temp2 = get_argn();
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall gt,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			generate_line("pop eax");
+			generate_line("pop ebx");
+			generate_line("cmp eax,ebx");
+			generate_line("setg al");
+			generate_line("movsx eax,al");
 			break;
 		case GE:
-			temp1 = get_argn();
 			parse_node(n->arg1);
-			temp2 = get_argn();
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "shcall ge,_a%d,_a%d", temp1, temp2);
-			generate_line(sprintf_fodder);
-			dec_argn(); dec_argn(); //Binary operator, so move stack back 2.
-			push_name("uscore");
+			generate_line("pop eax");
+			generate_line("pop ebx");
+			generate_line("cmp eax,ebx");
+			generate_line("setge al");
+			generate_line("movsx eax,al");
 			break;
 	}
 }

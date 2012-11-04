@@ -18,12 +18,12 @@
 %macro shdata 0
 		defdata
 		string uscore,"_" ;The underscore is used as the default variable to store a result in.
-        string _a0,"_a0"
-        string _a1,"_a1"
-        string _a2,"_a2"
-        string _a3,"_a3"
-        string _a4,"_a4"
-        string _a5,"_a5"
+		string _a0,"_a0"
+		string _a1,"_a1"
+		string _a2,"_a2"
+		string _a3,"_a3"
+		string _a4,"_a4"
+		string _a5,"_a5"
 		string add,"add"
 %endmacro
 
@@ -60,17 +60,17 @@
 %endmacro
 
 %macro shget 1
-        shmov uscore,%1
+		shmov uscore,%1
 %endmacro
 
 %macro exit 0
-		mov		ebx,0	;first syscall argument: exit code
-        mov     eax,1   ;system call number (sys_exit)
-        int     0x80	;call kernel
+		mov ebx,0	;first syscall argument: exit code
+		mov eax,1	;system call number (sys_exit)
+		int 0x80	;call kernel
 %endmacro
 
 %macro flushargs 0
-		add		esp,byte 8      ; `byte' saves space
+		add esp,byte 8      ; `byte' saves space
 %endmacro
 
 %macro defmain 0
@@ -100,45 +100,45 @@
 %endmacro
 
 %macro ccall 1
-		call    %1
+		call %1
 %endmacro
 
 %macro ccall 2
-		push	%2
-		call	%1
+		push %2
+		call %1
 		flushargs
 %endmacro
 
 %macro ccall 3
-		push	%3
-		push	%2
-		call	%1
+		push %3
+		push %2
+		call %1
 		flushargs
 %endmacro
 
 %macro ccall 4
-		push	%4
-		push	%3
-		push	%2
-		call	%1
+		push %4
+		push %3
+		push %2
+		call %1
 		flushargs
 %endmacro
 
 %macro ccall 5
-		push	%5
-		push	%4
-		push	%3
-		push	%2
-		call	%1
+		push %5
+		push %4
+		push %3
+		push %2
+		call %1
 		flushargs
 %endmacro
 
 %macro ccall 6
-		push	%6
-		push	%5
-		push	%4
-		push	%3
-		push	%2
-		call	%1
+		push %6
+		push %5
+		push %4
+		push %3
+		push %2
+		call %1
 		flushargs
 %endmacro

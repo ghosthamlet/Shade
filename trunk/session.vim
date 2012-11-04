@@ -8,20 +8,22 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +0 ~/projects/Shade/trunk/Makefile
-badd +0 ~/projects/Shade/trunk/parser/shade.l
-badd +0 ~/projects/Shade/trunk/parser/shade.y
-badd +1 ~/projects/Shade/trunk/parser/..
+badd +1 ~/projects/Shade/trunk/Makefile
+badd +1 ~/projects/Shade/trunk/parser/shade.l
+badd +34 ~/projects/Shade/trunk/parser/shade.y
 badd +8 ~/projects/Shade/trunk/src
-badd +0 ~/projects/Shade/trunk/src/codegen.c
-badd +0 ~/projects/Shade/trunk/src/gen.c
-badd +0 ~/projects/Shade/trunk/include/gen.h
+badd +1 ~/projects/Shade/trunk/src/codegen.c
+badd +1 ~/projects/Shade/trunk/src/gen.c
+badd +8 ~/projects/Shade/trunk/include/gen.h
 badd +24 ~/projects/Shade/trunk/src/node.c
 badd +33 ~/projects/Shade/trunk/include/node.h
-badd +0 ~/projects/Shade/trunk/src/treewalker.c
-badd +0 ~/projects/Shade/trunk/include/treewalker.h
-badd +0 ~/projects/Shade/trunk/libshade/libshade.cpp
-badd +0 ~/projects/Shade/trunk/libshade/shade.asm
+badd +1 ~/projects/Shade/trunk/src/treewalker.c
+badd +6 ~/projects/Shade/trunk/include/treewalker.h
+badd +1 ~/projects/Shade/trunk/libshade/libshade.cpp
+badd +1 ~/projects/Shade/trunk/libshade/shade.asm
+badd +1 ~/projects/Shade/trunk/..
+badd +0 ~/projects/Shade/trunk/shade.asm
+badd +0 ~/projects/Shade/trunk/libshade.cpp
 silent! argdel *
 edit ~/projects/Shade/trunk/Makefile
 set splitbelow splitright
@@ -30,12 +32,12 @@ set nosplitright
 wincmd t
 set winheight=1 winwidth=1
 argglobal
-let s:l = 6 - ((5 * winheight(0) + 20) / 40)
+let s:l = 6 - ((5 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 6
-normal! 045l
+normal! 018l
 tabedit ~/projects/Shade/trunk/parser/shade.y
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -46,10 +48,10 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 argglobal
-let s:l = 34 - ((32 * winheight(0) + 20) / 40)
+let s:l = 34 - ((31 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -58,15 +60,15 @@ normal! 028l
 wincmd w
 argglobal
 edit ~/projects/Shade/trunk/parser/shade.l
-let s:l = 6 - ((5 * winheight(0) + 20) / 40)
+let s:l = 6 - ((5 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 6
 normal! 0
 wincmd w
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 tabedit ~/projects/Shade/trunk/src/codegen.c
 set splitbelow splitright
 set nosplitbelow
@@ -74,7 +76,7 @@ set nosplitright
 wincmd t
 set winheight=1 winwidth=1
 argglobal
-let s:l = 10 - ((9 * winheight(0) + 20) / 40)
+let s:l = 10 - ((9 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -91,10 +93,10 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 argglobal
-let s:l = 8 - ((7 * winheight(0) + 20) / 40)
+let s:l = 8 - ((7 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -104,7 +106,7 @@ lcd ~/projects/Shade/trunk
 wincmd w
 argglobal
 edit ~/projects/Shade/trunk/src/gen.c
-let s:l = 14 - ((13 * winheight(0) + 20) / 40)
+let s:l = 14 - ((13 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -112,8 +114,8 @@ normal! zt
 normal! 0
 lcd ~/projects/Shade/trunk
 wincmd w
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 tabedit ~/projects/Shade/trunk/include/node.h
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -124,10 +126,10 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 argglobal
-let s:l = 33 - ((25 * winheight(0) + 20) / 40)
+let s:l = 33 - ((24 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -137,7 +139,7 @@ lcd ~/projects/Shade/trunk
 wincmd w
 argglobal
 edit ~/projects/Shade/trunk/src/node.c
-let s:l = 24 - ((23 * winheight(0) + 20) / 40)
+let s:l = 24 - ((22 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -145,8 +147,8 @@ normal! zt
 normal! 01l
 lcd ~/projects/Shade/trunk
 wincmd w
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 tabedit ~/projects/Shade/trunk/include/treewalker.h
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -157,10 +159,10 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 argglobal
-let s:l = 6 - ((5 * winheight(0) + 20) / 40)
+let s:l = 6 - ((5 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -170,17 +172,17 @@ lcd ~/projects/Shade/trunk
 wincmd w
 argglobal
 edit ~/projects/Shade/trunk/src/treewalker.c
-let s:l = 169 - ((33 * winheight(0) + 20) / 40)
+let s:l = 169 - ((32 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 169
-normal! 046l
+normal! 022l
 lcd ~/projects/Shade/trunk
 wincmd w
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
-tabedit ~/projects/Shade/trunk/libshade/shade.asm
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
+tabedit ~/projects/Shade/trunk/shade.asm
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -190,30 +192,31 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
 argglobal
-let s:l = 84 - ((19 * winheight(0) + 20) / 40)
+let s:l = 1 - ((0 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-84
-normal! 08l
+1
+normal! 0
 lcd ~/projects/Shade/trunk
 wincmd w
 argglobal
-edit ~/projects/Shade/trunk/libshade/libshade.cpp
-let s:l = 126 - ((19 * winheight(0) + 20) / 40)
+edit ~/projects/Shade/trunk/libshade.cpp
+let s:l = 1 - ((0 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-126
-normal! 032l
+1
+normal! 0
 lcd ~/projects/Shade/trunk
 wincmd w
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
-exe 'vert 2resize ' . ((&columns * 81 + 84) / 168)
-tabnext 1
+2wincmd w
+exe 'vert 1resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 2resize ' . ((&columns * 81 + 84) / 169)
+tabnext 7
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
 endif

@@ -2,7 +2,7 @@
 #include "shade.tab.h"
 #include "node.h"
 #define TOKEN(t) yylval.token = t; return t
-// [0-9]+\.[0-9]*          yylval.node_t = const_double(atof(yytext)); return TDOUBLE;
+//[0-9]+\.[0-9]*          yylval.node_t = const_double(atof(yytext)); return TDOUBLE;
 %}
 
 %option noyywrap
@@ -13,7 +13,8 @@
 "parsedbg"              printf("parsedbg");
 "if"                    TOKEN(TIF);
 "while"                 TOKEN(TWHILE);
-[a-zA-Z_][a-zA-Z0-9_]*  yylval.node_t = get_variable(yytext); return TIDENTIFIER;
+"declare"               TOKEN(TDECLARE);
+[a-zA-Z_][a-zA-Z0-9_]*  yylval.node_t = identifier(yytext); return TIDENTIFIER;
 [0-9]+                  yylval.node_t = const_integer(atoi(yytext)); return TINTEGER;
 "="                     TOKEN(TEQUAL);
 "=="                    TOKEN(TCEQ);
