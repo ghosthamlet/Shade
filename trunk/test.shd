@@ -1,0 +1,8 @@
+declare printf;
+declare atoi;
+int x;
+x = 10;
+while (x) {
+	printf("%d", atoi("12345"));
+	x = x - 1;
+}

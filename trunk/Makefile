@@ -1,4 +1,4 @@
-OBJECTS = src/codegen.o src/node.o src/treewalker.o src/gen.o
+OBJECTS = src/codegen.o src/node.o src/treewalker.o src/gen.o src/type.o
 CFLAGS = "-Iinclude"
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
@@ -14,7 +14,7 @@ all : parser $(OBJECTS)
 lib: libshade.cpp
 	g++ libshade.cpp -o libshade.so -c -g -fPIC -shared
 parser: parser/shade.y parser/shade.l
-	bison -d parser/shade.y
+	bison -d -t parser/shade.y
 	flex -d parser/shade.l
 	gcc -c shade.tab.c -o parser.o -Iinclude -g
 	gcc -c lex.yy.c -o lexer.o -Iinclude -g

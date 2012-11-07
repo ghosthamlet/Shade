@@ -11,9 +11,12 @@ typedef enum instruction {
 	STATEMENT,
 	BLOCK,
 	EXPRESSION_LIST,
+	EXTERNAL_FUNCTION,
+	DECLARE_FUNCTION,
 	DECLARE_VAR,
 	CONST_INTEGER,
 	CONST_DOUBLE,
+	CONST_STRING,
 	GET_VARIABLE,
 	IDENTIFIER,
 	CALL_FUNCTION,
@@ -37,11 +40,13 @@ typedef struct node {
 	struct node *arg1;
 	struct node *arg2;
 	int ival;
-	char *strval;
+	char strval[256];
+	double dval;
 } node;
 
 node *make_node(instruction ins, node *arg1, node *arg2, int val, char *strval);
 node *const_integer(int val);
+node *const_string(char *val);
 node *identifier(char *name);
 
 #endif

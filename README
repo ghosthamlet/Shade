@@ -1,5 +1,10 @@
-++++++++++UMBRA++++++++++
-Umbra is several things, all conveniently packaged together. One of Umbra's main components is a compiler, called Otaku. Otaku is designed for modularity, meaning that the scanner/parser, the optimizer, and the code generator are separate, and are each saved in a dynamically loaded library, so they can be swapped out at runtime. I plan to implement frontends for Python, Perl, Lisp, and Shade (A new language, covered in the next section), and backends for x86, x64, the JVM, and the .NET. Currently only the Shade frontend and the x86 backend are implemented, and even then are under heavy
-development.
+Please take a moment to look at the LICENSE file.
 
-Shade is also a language, simply called Shade. Shade's main design goals are speed, interoperability with C, and simplicity. By simplicity, I mean simplicity internally, not simplicity in the language's features. Like Perl, it makes "easy things easy and hard things possible". Unlike Perl (and Python), it is compiled and statically typed, allowing it to have speed far exceeding most dynamic languages, while remaining high-level enough to actually do work.
+ +=====================+
+|| /-\ | | /-\ |-\ |-- ||
+|| \__ |-| |_| | | |-  ||
+|| \_/ | | | | |_| |-- ||
+ +=====================+
+ fig 1: fancy ASCII art
+
+ Shade is a neato programming language. Right now, it's basically C only trimmed down a bit. So, no type checking. That's up to you. A minimal, consistent syntax is a primary design goal for as long as is feasible/interesting. I started making this one day just to see if I could, but then it gradually turned into something useful. I'll right a longer README later when I have time, right now coding is more important.

@@ -3,5 +3,5 @@
 #include <stdio.h>
 #include <assert.h>
 #include "node.h"
-#include "utils.h"
+#include "debug.h"
 void parse_node(node *n);
