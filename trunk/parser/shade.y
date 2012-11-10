@@ -1,5 +1,6 @@
 %{
 	#include "node.h"
+	#include "type.h"
 	#include <stdio.h>
 	extern int yylex();
 	void yyerror(const char *s) { printf("ERROR: %s\n", s); }
@@ -14,9 +15,11 @@
 
 %token <token> END
 %token <node_t> TIDENTIFIER
-%token <type_t> TDOUBLE
-%token <type_t> TINTEGER
-%token <type_t> TSTRING
+%token <node_t> TINTEGER
+%token <node_t> TSTRING
+%token <type_t> TDOUBLE_T
+%token <type_t> TINTEGER_T
+%token <type_t> TSTRING_T
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TSEMICOLON TDOT
 %token <token> TPLUS TMINUS TMUL TDIV
@@ -29,6 +32,8 @@
 %type <node_t> control_structure
 %type <node_t> block
 %type <node_t> var_decl
+%type <node_t> func_decl
+%type <node_t> func_args_list
 %type <node_t> ident
 %type <node_t> numeric
 %type <node_t> expr
@@ -61,6 +66,7 @@ stmts : stmt {$$ = make_node(STATEMENT_LIST, $1, NULL, 0, NULL);}
 stmt : TDECLARE ident TSEMICOLON {$$ = make_node(EXTERNAL_FUNCTION, $2, NULL, 0, NULL);}
      | control_structure {$$ = $1;}
      | var_decl TSEMICOLON {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
+     | func_decl {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
      | expr TSEMICOLON {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
      | block {$$ = $1;}
      ;
@@ -76,12 +82,19 @@ block : TLBRACE stmts TRBRACE {$$ = make_node(BLOCK, $2, NULL, 0, NULL);}
 var_decl : type ident {$$ = make_node(DECLARE_VAR, $2, NULL, $1->size, NULL);}
 	 ;
 
-func_decl : type ident TLPAREN call_args TRPAREN stmt {
+func_decl : type ident TLPAREN func_args_list TRPAREN stmt {
 	  $2->ival = $1->size;
-	  $$ = make_node(DECLARE_FUNCTION, $2, make_node(FUNCTION_BODY, $3, $5, 0, NULL), 0, NULL);}
+	  $$ = make_node(DECLARE_FUNCTION, $2, make_node(FUNCTION_BODY, $4, $6, 0, NULL), 0, NULL);}
 	  ;
 
-type : TINT {$$ = $1;}
+func_args_list : /*blank*/  {$$ = make_node(IDENT_LIST, NULL, NULL, 0, NULL);}
+	       | type ident {$$ = make_node(IDENT_LIST, $2, NULL, $1->size, NULL);}
+	       | func_args_list TCOMMA type ident {
+	       $$->ival += $3->size;
+	       $$->arg2 = make_node(IDENT_LIST, $4, NULL, 0, NULL);}
+	       ;
+
+type : TINTEGER_T {$$ = $1;}
      ;
 
 ident : TIDENTIFIER {$$ = $1;}

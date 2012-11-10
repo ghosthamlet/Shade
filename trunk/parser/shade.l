@@ -1,6 +1,7 @@
 %{
 #include "shade.tab.h"
 #include "node.h"
+#include "type.h"
 #define TOKEN(t) yylval.token = t; return t
 //[0-9]+\.[0-9]*          yylval.node_t = const_double(atof(yytext)); return TDOUBLE;
 %}
@@ -14,7 +15,7 @@
 "if"                    TOKEN(TIF);
 "while"                 TOKEN(TWHILE);
 "declare"               TOKEN(TDECLARE);
-"int"                   yylval.type_t = type_int(); return TINT;
+"int"               yylval.type_t = type_int(); return TINTEGER_T;
 [a-zA-Z_][a-zA-Z0-9_]*  yylval.node_t = identifier(yytext); return TIDENTIFIER;
 L?\"(\\.|[^\\"])*\"     yylval.node_t = const_string(yytext); return TSTRING;
 [0-9]+                  yylval.node_t = const_integer(atoi(yytext)); return TINTEGER;

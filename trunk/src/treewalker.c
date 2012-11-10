@@ -60,13 +60,18 @@ void parse_node(node *n) {
 			break;
 		case DECLARE_FUNCTION:
 			sprintf(sprintf_fodder, "global %s\n%s:", n->arg1->strval, n->arg1->strval);
-			generate_line(sprintf_fodder);
-			generate_line("push ebp\nmov ebp,esp");
-			temp1 = 0;
-			tempnode = n->arg2->arg2;
-			while (n != NULL) {
-
-			sprintf(sprintf_fodder, "sub esp", n->arg
+			generate_func(sprintf_fodder);
+			generate_func("push ebp\nmov ebp,esp\nsub esp,0x40");
+			sprintf(sprintf_fodder, "sub esp,%d", n->arg2->ival);
+			generate_func(sprintf_fodder);
+			set_func_context(1);
+			parse_node(n->arg2);
+			set_func_context(0);
+			generate_func("mov esp,ebp\npop ebp");
+			generate_func("ret");
+			break;
+		case FUNCTION_BODY:
+			parse_node(n->arg2);
 			break;
 		case DECLARE_VAR:
 			sprintf(sprintf_fodder, "%s: resb %d", n->arg1->strval, n->ival);

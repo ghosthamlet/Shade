@@ -1,8 +1,9 @@
 declare printf;
-declare atoi;
 int x;
-x = 10;
-while (x) {
-	printf("%d", atoi("12345"));
-	x = x - 1;
+x = 1+2+3;
+int print () {
+	printf("%d", x);
 }
+print();
+x = 10;
+print();
