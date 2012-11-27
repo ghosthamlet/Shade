@@ -1,9 +1,13 @@
 declare printf;
 int x;
-x = 1+2+3;
-int print () {
-	printf("%d", x);
+x = 20+6+8;
+int y;
+y = 15;
+int func() {
+	int y;
+	y = 51;
+	printf("%d", y);
 }
-print();
-x = 10;
-print();
+printf("%d %d", x, y);
+func();
+printf("%d %d", x, y);

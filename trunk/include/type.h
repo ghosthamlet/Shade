@@ -2,6 +2,7 @@
 #define TYPE_H
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
 
 typedef struct type_decl {
 	int size;

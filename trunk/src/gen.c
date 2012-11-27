@@ -12,6 +12,7 @@ FILE *FUNCS;
 char __funcs[1024*1024];
 int STRCOUNT = 0;
 int FUNC_CONTEXT = 0;
+int BASE_OFFSET = 0;
 void write_output(char *o)
 {
 	fprintf(OUTPUT, "%s\n", o);
@@ -19,6 +20,7 @@ void write_output(char *o)
 void set_func_context(int c)
 {
 	FUNC_CONTEXT = c;
+	BASE_OFFSET = 0;
 }
 void generate_line(char *line)
 {
@@ -91,4 +93,26 @@ void push_string(char *s)
 	sprintf(sprintf_fodder, "push __str%d", STRCOUNT);
 	generate_line(sprintf_fodder);
 	STRCOUNT++;
+}
+void get_scalar(char *name)
+{
+	char sprintf_fodder[100];
+	debug("get_scalar: symbol location=%s", get_symbol_location(name));
+	sprintf(sprintf_fodder, "push %s", get_symbol_location(name));
+	generate_line(sprintf_fodder);
+}
+void declare_scalar(char *name, char *typecode, int size)
+{
+	char sprintf_fodder[100];
+	if (FUNC_CONTEXT) {
+		sprintf(sprintf_fodder, "dword [ebp-%d]", BASE_OFFSET+size);
+		BASE_OFFSET += size;
+	} else {
+		sprintf(sprintf_fodder, "%s: resb %d", name, size);
+		generate_bss(sprintf_fodder);
+		sprintf(sprintf_fodder, "dword [%s]", name);
+	}
+	new_symbol(name, typecode, sprintf_fodder, size);
+	debug("declare_scalar: sprintf_fodder=%s", sprintf_fodder);
+	debug("declare_scalar: location=%s", get_symbol_location(name));
 }

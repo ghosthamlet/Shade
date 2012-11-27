@@ -25,8 +25,8 @@ node *const_integer(int val)
 
 node *const_double(double val)
 {
-	printf("const_double, val is: %f\n", val);
-	node *n = make_node(CONST_DOUBLE, NULL, NULL, 0, NULL);
+	//printf("const_double, val is: %f\n", val);
+	//node *n = make_node(CONST_DOUBLE, NULL, NULL, 0, NULL);
 }
 
 node *const_string(char *val)

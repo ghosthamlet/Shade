@@ -12,11 +12,7 @@ int IF_END_COUNT = 0;
 int LOOP_COUNT = 0;
 
 void parse_node(node *n) {
-	debug("NODE: ins = %d, arg1 = %d, arg2 = %d\n", n->ins, n->arg1, n->arg2);
 	char sprintf_fodder[100];
-	int temp1;
-	int temp2;
-	node *tempnode;
 	switch (n->ins) {
 		case MAIN_PROGRAM:
 			start_generation();
@@ -30,22 +26,25 @@ void parse_node(node *n) {
 			stop_generation();
 			break;
 		case STATEMENT_LIST:
-			if (n->arg1 != NULL) {
-				parse_node(n->arg1);
-			}
 			if (n->arg2 != NULL) {
 				parse_node(n->arg2);
+			}
+			if (n->arg1 != NULL) {
+				parse_node(n->arg1);
 			}
 			break;
 		case STATEMENT:
 			parse_node(n->arg1);
 			break;
 		case EXPRESSION_LIST:
-			if (n->arg2 != NULL) {
-				parse_node(n->arg2);
-			}
+			debug("EXPRESSION_LIST");
 			if (n->arg1 != NULL) {
+				debug("n->arg1->ins=%d", n->arg1->ins);
 				parse_node(n->arg1);
+			}
+			if (n->arg2 != NULL) {
+				debug("n->arg2->ins=%d", n->arg2->ins);
+				parse_node(n->arg2);
 			}
 			break;
 		case BLOCK:
@@ -65,7 +64,9 @@ void parse_node(node *n) {
 			sprintf(sprintf_fodder, "sub esp,%d", n->arg2->ival);
 			generate_func(sprintf_fodder);
 			set_func_context(1);
+			push_symtab();
 			parse_node(n->arg2);
+			pop_symtab();
 			set_func_context(0);
 			generate_func("mov esp,ebp\npop ebp");
 			generate_func("ret");
@@ -74,8 +75,8 @@ void parse_node(node *n) {
 			parse_node(n->arg2);
 			break;
 		case DECLARE_VAR:
-			sprintf(sprintf_fodder, "%s: resb %d", n->arg1->strval, n->ival);
-			generate_bss(sprintf_fodder);
+			debug("DECLARE_VAR: n->arg1->strval=%s", n->arg1->strval);
+			declare_scalar(n->arg1->strval, "int", n->ival);
 			break;
 		case CONST_INTEGER:
 			debug("CONST_INTEGER: val=%d\n", n->ival);
@@ -90,8 +91,8 @@ void parse_node(node *n) {
 			push_string(n->strval);
 			break;
 		case GET_VARIABLE:
-			sprintf(sprintf_fodder, "push dword [%s]", n->arg1->strval);
-			generate_line(sprintf_fodder);
+			debug("GET_VARIABLE: n->arg1->strval=%s", n->arg1->strval);
+			get_scalar(n->arg1->strval);
 			break;
 		case CALL_FUNCTION:
 			parse_node(n->arg2);
@@ -102,7 +103,7 @@ void parse_node(node *n) {
 		case ASSIGN:
 			parse_node(n->arg2);
 			generate_line("pop eax");
-			sprintf(sprintf_fodder, "mov dword [%s],eax", n->arg1->strval);
+			sprintf(sprintf_fodder, "mov %s,eax", get_symbol_location(n->arg1->strval));
 			generate_line(sprintf_fodder);
 			break;
 		case IF:

@@ -54,13 +54,7 @@ program : stmts {ROOT_NODE = make_node(MAIN_PROGRAM, $1, NULL, 0, NULL);}
 	;
 
 stmts : stmt {$$ = make_node(STATEMENT_LIST, $1, NULL, 0, NULL);}
-      | stmts stmt {
-      		node *n;
-      		for (n = $1; n->arg2 != NULL; n = n->arg2) {
-			;
-		}
-		n->arg2 = make_node(STATEMENT_LIST, $2, NULL, 0, NULL);
-		}
+      | stmts stmt {$$ = make_node(STATEMENT_LIST, $2, $1, 0, NULL);}
       ;
 
 stmt : TDECLARE ident TSEMICOLON {$$ = make_node(EXTERNAL_FUNCTION, $2, NULL, 0, NULL);}
@@ -105,8 +99,8 @@ numeric : TINTEGER {$$ = $1;}
 	;
 
 expr : ident TEQUAL expr {$$ = make_node(ASSIGN, $1, $3, 0, NULL);}
-     | ident TLPAREN call_args TRPAREN {$$ = make_node(CALL_FUNCTION, $1, $3, 0, NULL);}
      | ident {$$ = make_node(GET_VARIABLE, $1, NULL, 0, NULL);}
+     | ident TLPAREN call_args TRPAREN {$$ = make_node(CALL_FUNCTION, $1, $3, 0, NULL);}
      | numeric {$$ = $1;}
      | TSTRING {$$ = $1;}
      | expr operator expr {switch ($2) {
@@ -146,7 +140,7 @@ case TCGE:
 
 call_args : /*blank*/  {$$ = make_node(EXPRESSION_LIST, NULL, NULL, 0, NULL);}
 	  | expr {$$ = make_node(EXPRESSION_LIST, $1, NULL, 0, NULL);}
-	  | call_args TCOMMA expr {$$->arg2 = make_node(EXPRESSION_LIST, $3, NULL, 0, NULL);}
+	  | call_args TCOMMA expr {$$ = make_node(EXPRESSION_LIST, $3, $1, 0, NULL);}
 	  ;
 
 operator : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE
