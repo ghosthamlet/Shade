@@ -17,11 +17,9 @@
 %token <node_t> TIDENTIFIER
 %token <node_t> TINTEGER
 %token <node_t> TSTRING
-%token <type_t> TDOUBLE_T
-%token <type_t> TINTEGER_T
-%token <type_t> TSTRING_T
+%token <type_t> TINTEGER_T TCHAR_T
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
-%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TSEMICOLON TDOT
+%token <token> TLPAREN TRPAREN TLSQUARE TRSQUARE TLBRACE TRBRACE TCOMMA TSEMICOLON TDOT
 %token <token> TPLUS TMINUS TMUL TDIV
 %token <token> TIF TWHILE
 %token <token> TDECLARE
@@ -36,6 +34,7 @@
 %type <node_t> func_args_list
 %type <node_t> ident
 %type <node_t> numeric
+%type <node_t> subscript_array
 %type <node_t> expr
 %type <node_t> call_args
 %type <token> operator
@@ -73,7 +72,8 @@ block : TLBRACE stmts TRBRACE {$$ = make_node(BLOCK, $2, NULL, 0, NULL);}
       | TLBRACE TRBRACE {$$ = make_node(BLOCK, NULL, NULL, 0, NULL);}
       ;
 
-var_decl : type ident {$$ = make_node(DECLARE_VAR, $2, NULL, $1->size, NULL);}
+var_decl : type ident {$$ = make_node(DECLARE_VAR, $2, NULL, $1->size, $1->typecode);}
+	 | var_decl TCOMMA ident {$$ = make_node(DECLARE_VAR, $3, $1, $1->ival, $1->strval);}
 	 ;
 
 func_decl : type ident TLPAREN func_args_list TRPAREN stmt {
@@ -89,6 +89,8 @@ func_args_list : /*blank*/  {$$ = make_node(IDENT_LIST, NULL, NULL, 0, NULL);}
 	       ;
 
 type : TINTEGER_T {$$ = $1;}
+     | TCHAR_T {$$ = $1;}
+     | type TLSQUARE TINTEGER TRSQUARE {$$ = type_array($1, $3->ival);}
      ;
 
 ident : TIDENTIFIER {$$ = $1;}
@@ -98,11 +100,15 @@ numeric : TINTEGER {$$ = $1;}
 /*	| TDOUBLE {$$ = $1;}*/
 	;
 
-expr : ident TEQUAL expr {$$ = make_node(ASSIGN, $1, $3, 0, NULL);}
-     | ident {$$ = make_node(GET_VARIABLE, $1, NULL, 0, NULL);}
+subscript_array : ident TLSQUARE expr TRSQUARE {$$ = make_node(SUBSCRIPT_ARRAY, $1, $3, 0, NULL);}
+
+expr : ident {$$ = make_node(GET_VARIABLE, $1, NULL, 0, NULL);}
+     | subscript_array {$$ = make_node(GET_VARIABLE, NULL, $1, 0, NULL);}
      | ident TLPAREN call_args TRPAREN {$$ = make_node(CALL_FUNCTION, $1, $3, 0, NULL);}
      | numeric {$$ = $1;}
      | TSTRING {$$ = $1;}
+     | ident TEQUAL expr {$$ = make_node(ASSIGN, $1, $3, 0, NULL);}
+     | subscript_array TEQUAL expr {$$ = make_node(ASSIGN, $1, $3, 1, NULL);}
      | expr operator expr {switch ($2) {
 case TPLUS:
 	$$ = make_node(PLUS, $1, $3, 0, NULL);

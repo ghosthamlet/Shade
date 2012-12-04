@@ -1,13 +1,21 @@
 declare printf;
-int x;
-x = 20+6+8;
-int y;
-y = 15;
-int func() {
-	int y;
-	y = 51;
-	printf("%d", y);
+int[10] x;
+x[0] = 54;
+x[1] = 96;
+int y, z;
+y = 10;
+z = 1;
+int f() {
+	int y, z;
+	y = 5;
+	z = 0;
+	if (y == 5) {
+		if (y != 6) {
+			printf("%d %d", y, z);
+		}
+	}
 }
-printf("%d %d", x, y);
-func();
-printf("%d %d", x, y);
+printf("%d", x[0]);
+printf("%d %d", y, z);
+f();
+printf("%d %d", y, z);

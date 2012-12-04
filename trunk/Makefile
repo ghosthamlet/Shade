@@ -24,5 +24,4 @@ uninstall:
 	rm $(DESTDIR)$(bindir)/shade
 clean:
 	rm shade.tab.c shade.tab.h lex.yy.c
-	rm *.o
-	rm src/*.o
+	rm $(OBJECTS)

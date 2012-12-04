@@ -14,6 +14,7 @@ typedef struct symtab_entry {
 } symtab_entry;
 
 list_node *current_symtab();
+//void import_symtab(list_node *other);
 void push_symtab();
 void pop_symtab();
 void new_symbol(char *name, char *typecode, char *location, int size);

@@ -22,6 +22,7 @@ typedef enum instruction {
 	IDENTIFIER,
 	IDENT_LIST,
 	CALL_FUNCTION,
+	SUBSCRIPT_ARRAY,
 	ASSIGN,
 	IF,
 	WHILE,

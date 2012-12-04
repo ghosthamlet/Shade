@@ -10,6 +10,15 @@ list_node *current_symtab() {
 	return SYMBOL_TABLE_STACK[SYMBOL_STACK_INDEX];
 }
 
+/*void import_symtab(list_node *other) {
+	list_node *symtab = current_symtab();
+	list_node *c;
+	for (c = symtab->next; c->next != NULL; c = c->next) {}
+	c->next = other->next;
+	other->next = symtab;
+	symtab->prev = other;
+}*/
+
 void push_symtab() {
 	SYMBOL_STACK_INDEX++;
 }

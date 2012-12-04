@@ -18,5 +18,6 @@ void stop_generation();
 void push_int(int i);
 void push_string(char *i);
 void get_scalar(char *name);
+void get_vector(char *name);
 void declare_scalar(char *name, char *typecode, int size);
 #endif

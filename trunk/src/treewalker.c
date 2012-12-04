@@ -13,6 +13,7 @@ int LOOP_COUNT = 0;
 
 void parse_node(node *n) {
 	char sprintf_fodder[100];
+	int temp1;
 	switch (n->ins) {
 		case MAIN_PROGRAM:
 			start_generation();
@@ -76,7 +77,10 @@ void parse_node(node *n) {
 			break;
 		case DECLARE_VAR:
 			debug("DECLARE_VAR: n->arg1->strval=%s", n->arg1->strval);
-			declare_scalar(n->arg1->strval, "int", n->ival);
+			if (n->arg2 != NULL) {
+				parse_node(n->arg2);
+			}
+			declare_scalar(n->arg1->strval, n->strval, n->ival);
 			break;
 		case CONST_INTEGER:
 			debug("CONST_INTEGER: val=%d\n", n->ival);
@@ -91,8 +95,13 @@ void parse_node(node *n) {
 			push_string(n->strval);
 			break;
 		case GET_VARIABLE:
-			debug("GET_VARIABLE: n->arg1->strval=%s", n->arg1->strval);
-			get_scalar(n->arg1->strval);
+			debug("GET_VARIABLE");
+			if (n->arg2 != NULL) {
+				parse_node(n->arg2->arg2);
+				get_vector(n->arg2->arg1->strval);
+			} else {
+				get_scalar(n->arg1->strval);
+			}
 			break;
 		case CALL_FUNCTION:
 			parse_node(n->arg2);
@@ -102,33 +111,49 @@ void parse_node(node *n) {
 			break;
 		case ASSIGN:
 			parse_node(n->arg2);
-			generate_line("pop eax");
-			sprintf(sprintf_fodder, "mov %s,eax", get_symbol_location(n->arg1->strval));
-			generate_line(sprintf_fodder);
+			symtab_entry *symdata;
+			if (n->arg1->ins == SUBSCRIPT_ARRAY) {
+				debug("%s", n->arg1->arg1->strval);
+				symdata = get_symbol_data(n->arg1->arg1->strval);
+				parse_node(n->arg1->arg2);
+				sprintf(sprintf_fodder, "pop eax\nadd eax,%s", symdata->location);
+				generate_line(sprintf_fodder);
+				generate_line("pop ebx");//THIS IS ALL BROKEN. DON'T ASSUME IT WORKS
+				sprintf(sprintf_fodder, "mov dword [eax],ebx", symdata->location, 4 * n->ival);
+				generate_line(sprintf_fodder);
+			} else {
+				debug("%s", n->arg1->strval);
+				symdata = get_symbol_data(n->arg1->strval);
+				generate_line("pop eax");
+				sprintf(sprintf_fodder, "mov dword [%s],eax", get_symbol_location(n->arg1->strval));
+				generate_line(sprintf_fodder);
+			}
 			break;
 		case IF:
 			parse_node(n->arg1);
 			generate_line("pop eax");
 			generate_line("cmp eax, 0");
 			//We increment IF_END_COUNT here so we can nest these.
+			temp1 = IF_END_COUNT;
 			sprintf(sprintf_fodder, "jz __end%d", IF_END_COUNT++);
 			generate_line(sprintf_fodder);
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "__end%d:", IF_END_COUNT-1);
+			sprintf(sprintf_fodder, "__end%d:", temp1);
 			generate_line(sprintf_fodder);
 			break;
 		case WHILE:
+			temp1 = LOOP_COUNT;
 			sprintf(sprintf_fodder, "__start%d:", LOOP_COUNT++);
 			generate_line(sprintf_fodder);
 			parse_node(n->arg1);
 			generate_line("pop eax");
 			generate_line("cmp eax, 0");
-			sprintf(sprintf_fodder, "jz __end%d", LOOP_COUNT-1);
+			sprintf(sprintf_fodder, "jz __end%d", temp1);
 			generate_line(sprintf_fodder);
 			parse_node(n->arg2);
-			sprintf(sprintf_fodder, "jmp __start%d", LOOP_COUNT-1);
+			sprintf(sprintf_fodder, "jmp __start%d", temp1);
 			generate_line(sprintf_fodder);
-			sprintf(sprintf_fodder, "__end%d:", LOOP_COUNT-1);
+			sprintf(sprintf_fodder, "__end%d:", temp1);
 			generate_line(sprintf_fodder);
 			break;
 		case PLUS:
