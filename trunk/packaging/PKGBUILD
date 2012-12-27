@@ -1,0 +1,30 @@
+# Maintainer: Sam Breese <sbreese[at]xitol[dot]net>
+pkgname=shade
+pkgver=0.01
+pkgrel=1
+pkgdesc="Shade is a compiled programming language based on C, Go, and Haskell"
+url="https://github.com/chameco/Shade"
+arch=('i686')
+license=('MIT')
+depends=()
+optdepends=()
+makedepends=('flex' 'bison')
+conflicts=()
+replaces=()
+backup=()
+source=("http://www.server.tld/${pkgname}-${pkgver}.tar.gz"
+"foo.desktop")
+md5sums=('a0afa52d60cea6c0363a2a8cb39a4095'
+'a0afa52d60cea6c0363a2a8cb39a4095')
+
+build() {
+    cd "${srcdir}/${pkgname}-${pkgver}"
+    cmake ./ -DCMAKE_INSTALL_PREFIX=/usr
+    make
+}
+
+package() {
+    cd "${srcdir}/${pkgname}-${pkgver}"
+    make DESTDIR="${pkgdir}" install
+    install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+}
