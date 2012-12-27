@@ -19,3 +19,35 @@ Syntax (currently implemented)
 * Function Declarations: `def <name> [<name> -> <type>]* -> <type> <statement>`. Right now, arguments are VERY buggy. However, functions with no arguments work: `def foo -> Integer { var x -> Integer; x = 1; printf("%d", x); }`. Functions establish their own local namespace: they cannot read nor access global variables. This would lead to a natural use of the functional style if only you could pass arguments. Again, I'm working on it. Expect it very soon.
 * Conditionals: `if <expr> <statement>`. Evaluates the first expression, if it isn't equal to zero evaluate the statement. Else blocks coming soon!.
 * Loops: `while <expr> <statement>`. Loops as long as the first expression is true, evaluating statement as the loop body.
+
+Example
+-------
+
+```
+ext printf -> Integer;
+ext puts -> Integer;
+
+var y -> Integer, z -> Integer;
+var array -> Integer [10];
+
+y = 10;
+z = 1;
+
+array[0] = 98;
+array[2] = 100;
+
+def f -> Integer {
+    var y -> Integer, z -> Integer;
+    y = 5;
+    z = 0;
+    if y == 5 {
+        if y != 6 {
+            printf("%d %d", y, z);
+        }
+    }
+}
+
+printf("%d %d %d", y, z, array[2]);
+f();
+printf("%d %d", y, z);
+```
