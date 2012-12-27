@@ -1,6 +1,9 @@
 Shade - Language of champions!
 ==============================
 (Or rather, it would be if it was finished. Right now it's just sort of a minimal hybrid of C and Go with big plans for the future.)
+Installation
+------------
+`make` to build, `make install` to install.
 Lore and Spongy Stuff
 ---------------------
 Shade is a compiler, for a language of my own design. I'm a bit of a programming language snob. I've used most common languages, along with a handful (several handfuls, really) of some not-so-common ones. One of the languages that has influenced me the most is Common Lisp. I really like the language itself, but actually writing code in it feels counterintuitive, due to obscure error messages, no static typing, etc (yes, I'm aware of `declare`, `declaim` and their ilk but the errors are still really bad). One day, after bumbling through another pile of SBCL error messages, I said to myself, "Self, what are you doing still using this language? It's great and powerful and all, but it isn't *fun*.". Taking these words to heart, I searched the myriad languages I had installed at the time for one that had what I was looking for. None of them really fulfilled my requirements, so I made one instead, which still doesn't give me what I want, but it's getting there :-).
@@ -51,3 +54,6 @@ printf("%d %d %d", y, z, array[2]);
 f();
 printf("%d %d", y, z);
 ```
+License
+-------
+Shade is licensed under the MIT license (see the "LICENSE" file).
