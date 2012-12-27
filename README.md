@@ -51,3 +51,6 @@ printf("%d %d %d", y, z, array[2]);
 f();
 printf("%d %d", y, z);
 ```
+License
+-------
+Shade is licensed under the MIT license (see the "LICENSE" file).
