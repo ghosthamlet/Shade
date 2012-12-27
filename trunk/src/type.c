@@ -27,5 +27,6 @@ type_decl *type_array(type_decl *base, int length)
 {
 	type_decl *ret = (type_decl *) malloc(sizeof(type_decl));
 	ret->size = base->size * length;
+	ret->abase = base;
 	return ret;
 }

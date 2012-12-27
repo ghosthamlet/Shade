@@ -13,14 +13,17 @@
 
 [ \t\n]                 ;
 "parsedbg"              printf("parsedbg");
+"def"                   TOKEN(TDEF);
+"var"                   TOKEN(TVAR);
+"ext"                   TOKEN(TEXT);
 "if"                    TOKEN(TIF);
 "while"                 TOKEN(TWHILE);
-"declare"               TOKEN(TDECLARE);
-"int"                   yylval.type_t = type_int(); return TINTEGER_T;
-"char"                  yylval.type_t = type_char(); return TCHAR_T;
+"Integer"               yylval.type_t = type_int(); return TINTEGER_T;
+"Byte"                  yylval.type_t = type_char(); return TBYTE_T;
 [a-zA-Z_][a-zA-Z0-9_]*  yylval.node_t = identifier(yytext); return TIDENTIFIER;
 L?\"(\\.|[^\\"])*\"     yylval.node_t = const_string(yytext); return TSTRING;
 [0-9]+                  yylval.node_t = const_integer(atoi(yytext)); return TINTEGER;
+"->"                    TOKEN(TARROW);
 "="                     TOKEN(TEQUAL);
 "=="                    TOKEN(TCEQ);
 "!="                    TOKEN(TCNE);

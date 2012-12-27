@@ -14,6 +14,7 @@ int LOOP_COUNT = 0;
 void parse_node(node *n) {
 	char sprintf_fodder[100];
 	int temp1;
+	node *tempnode;
 	switch (n->ins) {
 		case MAIN_PROGRAM:
 			start_generation();
@@ -21,7 +22,7 @@ void parse_node(node *n) {
 				parse_node(n->arg1);
 			}
 			else {
-				debug("MAIN_PROGRAM node has NULL arg1");
+				log_err("MAIN_PROGRAM node has NULL arg1");
 				exit(1);
 			}
 			stop_generation();
@@ -49,6 +50,7 @@ void parse_node(node *n) {
 			}
 			break;
 		case BLOCK:
+			debug("BLOCK");
 			assert(n->arg1 != NULL);
 			//Eventually more things can be added here, such as support
 			//for lexical scoping.
@@ -62,8 +64,6 @@ void parse_node(node *n) {
 			sprintf(sprintf_fodder, "global %s\n%s:", n->arg1->strval, n->arg1->strval);
 			generate_func(sprintf_fodder);
 			generate_func("push ebp\nmov ebp,esp\nsub esp,0x40");
-			sprintf(sprintf_fodder, "sub esp,%d", n->arg2->ival);
-			generate_func(sprintf_fodder);
 			set_func_context(1);
 			push_symtab();
 			parse_node(n->arg2);
@@ -75,12 +75,15 @@ void parse_node(node *n) {
 		case FUNCTION_BODY:
 			parse_node(n->arg2);
 			break;
-		case DECLARE_VAR:
-			debug("DECLARE_VAR: n->arg1->strval=%s", n->arg1->strval);
-			if (n->arg2 != NULL) {
-				parse_node(n->arg2);
+		case DECLARE_VECTOR:
+			debug("DECLARE_VECTOR");
+			declare_vector(n->arg1->strval, n->arg1->strval, n->ival);
+			break;
+		case DECLARE_SCALAR:
+			debug("DECLARE_SCALAR");
+			for (tempnode = n->arg1; tempnode != NULL; tempnode = tempnode->arg2) {
+				declare_scalar(tempnode->arg1->strval, tempnode->strval, tempnode->ival);
 			}
-			declare_scalar(n->arg1->strval, n->strval, n->ival);
 			break;
 		case CONST_INTEGER:
 			debug("CONST_INTEGER: val=%d\n", n->ival);
@@ -94,14 +97,14 @@ void parse_node(node *n) {
 			debug("CONST_STRING: val=%s\n", n->strval);
 			push_string(n->strval);
 			break;
-		case GET_VARIABLE:
-			debug("GET_VARIABLE");
-			if (n->arg2 != NULL) {
-				parse_node(n->arg2->arg2);
-				get_vector(n->arg2->arg1->strval);
-			} else {
-				get_scalar(n->arg1->strval);
-			}
+		case GET_SCALAR:
+			debug("GET_SCALAR");
+			get_scalar(n->arg1->strval);
+			break;
+		case GET_VECTOR:
+			debug("GET_VECTOR");
+			parse_node(n->arg1->arg2);
+			get_vector(n->arg1->arg1->strval);
 			break;
 		case CALL_FUNCTION:
 			parse_node(n->arg2);
@@ -109,25 +112,28 @@ void parse_node(node *n) {
 			generate_line(sprintf_fodder);
 			generate_line("push eax");
 			break;
-		case ASSIGN:
+		case ASSIGN_SCALAR:
+			debug("ASSIGN_SCALAR");
 			parse_node(n->arg2);
-			symtab_entry *symdata;
-			if (n->arg1->ins == SUBSCRIPT_ARRAY) {
-				debug("%s", n->arg1->arg1->strval);
-				symdata = get_symbol_data(n->arg1->arg1->strval);
-				parse_node(n->arg1->arg2);
-				sprintf(sprintf_fodder, "pop eax\nadd eax,%s", symdata->location);
-				generate_line(sprintf_fodder);
-				generate_line("pop ebx");//THIS IS ALL BROKEN. DON'T ASSUME IT WORKS
-				sprintf(sprintf_fodder, "mov dword [eax],ebx", symdata->location, 4 * n->ival);
-				generate_line(sprintf_fodder);
-			} else {
-				debug("%s", n->arg1->strval);
-				symdata = get_symbol_data(n->arg1->strval);
-				generate_line("pop eax");
-				sprintf(sprintf_fodder, "mov dword [%s],eax", get_symbol_location(n->arg1->strval));
-				generate_line(sprintf_fodder);
-			}
+			generate_line("pop eax");
+			sprintf(sprintf_fodder, "mov dword [%s],eax", get_symbol_location(n->arg1->strval));
+			generate_line(sprintf_fodder);
+			break;
+		case ASSIGN_VECTOR:
+			debug("ASSIGN_VECTOR");
+			parse_node(n->arg1->arg2);
+			//generate_line("pop ebx");
+			//sprintf(sprintf_fodder, "mov ecx, %s", get_symbol_location(n->arg1->arg1->strval));
+			//generate_line(sprintf_fodder);
+			//generate_line("mov eax, 4");
+			//generate_line("mul ebx");
+			//generate_line("add ebx, ecx");
+
+			generate_line("pop ebx");
+			parse_node(n->arg2);
+			generate_line("pop eax");
+			sprintf(sprintf_fodder, "mov [%s+ebx*%d], eax", get_symbol_location(n->arg1->arg1->strval), 4);
+			generate_line(sprintf_fodder);
 			break;
 		case IF:
 			parse_node(n->arg1);

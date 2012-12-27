@@ -1,21 +1,26 @@
-declare printf;
-int[10] x;
-x[0] = 54;
-x[1] = 96;
-int y, z;
+ext printf -> Integer;
+ext puts -> Integer;
+
+var y -> Integer, z -> Integer;
+var array -> Integer [10];
+
 y = 10;
 z = 1;
-int f() {
-	int y, z;
-	y = 5;
-	z = 0;
-	if (y == 5) {
-		if (y != 6) {
-			printf("%d %d", y, z);
-		}
-	}
+
+array[0] = 98;
+array[2] = 100;
+
+def f -> Integer {
+    var y -> Integer, z -> Integer;
+    y = 5;
+    z = 0;
+    if y == 5 {
+        if y != 6 {
+            printf("%d %d", y, z);
+        }
+    }
 }
-printf("%d", x[0]);
-printf("%d %d", y, z);
+
+printf("%d %d %d", y, z, array[2]);
 f();
 printf("%d %d", y, z);

@@ -96,31 +96,42 @@ void push_string(char *s)
 }
 void get_scalar(char *name)
 {
+	debug("get_scalar");
 	char sprintf_fodder[100];
-	debug("get_scalar: symbol location=%s", get_symbol_location(name));
 	sprintf(sprintf_fodder, "push dword [%s]", get_symbol_location(name));
 	generate_line(sprintf_fodder);
 }
 void get_vector(char *name)
 {
+	debug("get_vector");
 	char sprintf_fodder[100];
-	debug("get_vector: symbol location=%s", get_symbol_location(name));
-	sprintf(sprintf_fodder, "pop eax\nadd eax,%s", get_symbol_location(name));
+	generate_line("pop eax");
+	sprintf(sprintf_fodder, "push dword [%s+eax*%d]", get_symbol_location(name), 4);
 	generate_line(sprintf_fodder);
-	generate_line("push dword [eax]");
 }
 void declare_scalar(char *name, char *typecode, int size)
 {
 	char sprintf_fodder[100];
 	if (FUNC_CONTEXT) {
-		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET+size);
 		BASE_OFFSET += size;
+		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET);
 	} else {
 		sprintf(sprintf_fodder, "%s: resb %d", name, size);
 		generate_bss(sprintf_fodder);
 		sprintf(sprintf_fodder, "%s", name);
 	}
 	new_symbol(name, typecode, sprintf_fodder, size);
-	debug("declare_scalar: sprintf_fodder=%s", sprintf_fodder);
-	debug("declare_scalar: location=%s", get_symbol_location(name));
+}
+void declare_vector(char *name, char *typecode, int size)
+{
+	char sprintf_fodder[100];
+	if (FUNC_CONTEXT) {
+		BASE_OFFSET += size;
+		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET);
+	} else {
+		sprintf(sprintf_fodder, "%s: resb %d", name, size);
+		generate_bss(sprintf_fodder);
+		sprintf(sprintf_fodder, "%s", name);
+	}
+	new_symbol(name, typecode, sprintf_fodder, size);
 }
