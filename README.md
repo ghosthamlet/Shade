@@ -19,7 +19,7 @@ Syntax (currently implemented)
 * Variables: `var <name> -> <type> [, <name> -> <type>]* ;`. Example: `var x -> Integer, y -> Byte;` declares variables `x` and `y` as types `Integer` and `Byte`, respectively.
 * Arrays: `var <name> -> <type> [<integer>] ;` Please note that those are literal brackets, rather then denoting an optional syntactic element. Example: `var array -> Integer [10];` declares an array named `array` of 10 integers.
 * External Functions: `ext <name> -> <type>;`. Declares a function defined in an external library. Right now, command line option support is nonexistent (I'll mess with getopt in the future, I promise!), so you only link with `libc`, but the support is there. Right now, this essentially lets you say `ext printf -> Integer;` so you can call `printf`.
-* Function Declarations: `def <name> [<name> -> <type>]* -> <type> <statement>`. Right now, arguments are VERY buggy. However, functions with no arguments work: `def foo -> Integer { var x -> Integer; x = 1; printf("%d", x); }`. Functions establish their own local namespace: they cannot read nor access global variables. This would lead to a natural use of the functional style if only you could pass arguments. Again, I'm working on it. Expect it very soon.
+* Function Declarations: `def <name> [<name> -> <type>]* -> <type> <statement>`. `def foo (arg -> Integer) -> Void { var x -> Integer; x = 1; printf("%d", arg + x); }`.
 * Conditionals: `if <expr> <statement>`. Evaluates the first expression, if it isn't equal to zero evaluate the statement. Else blocks coming soon!.
 * Loops: `while <expr> <statement>`. Loops as long as the first expression is true, evaluating statement as the loop body.
 
@@ -27,11 +27,12 @@ Example
 -------
 
 ```
-ext printf -> Integer;
-ext puts -> Integer;
+ext printf -> Void;
+ext puts -> Void;
 
 var y -> Integer, z -> Integer;
 var array -> Integer [10];
+var func -> (arg1 -> Integer, arg2 -> Integer) -> Integer;
 
 y = 10;
 z = 1;
@@ -39,21 +40,31 @@ z = 1;
 array[0] = 98;
 array[2] = 100;
 
-def f -> Integer {
-    var y -> Integer, z -> Integer;
+var string -> Byte [10];
+string = "bluhbluh";
+
+def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
+    ext printf -> Void;
+    var y -> Integer, z -> Integer, a -> Integer;
     y = 5;
     z = 0;
+    a = 15;
     if y == 5 {
-        if y != 6 {
-            printf("%d %d", y, z);
-        }
+        printf("%d %d %d %d %d", y, z, a, arg1, arg2);
+        if z {
+	    printf("Nope!");
+	}
     }
 }
 
-printf("%d %d %d", y, z, array[2]);
-f();
+func = f;
+
+printf("%d %d %d %d", y, z, array[0], array[2]);
+func(y, z);
 printf("%d %d", y, z);
+puts(string);
 ```
+
 License
 -------
 Shade is licensed under the MIT license (see the "LICENSE" file).
