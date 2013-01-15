@@ -1,3 +1,5 @@
+#ifndef TREEWALKER_H
+#define TREEWALKER_H
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -7,3 +9,4 @@
 #include "gen.h"
 #include "symtab.h"
 void parse_node(node *n);
+#endif

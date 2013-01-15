@@ -1,38 +1,62 @@
 #include "node.h"
 
-node *make_node(instruction ins, node *arg1, node *arg2, int ival, char *strval)
+value NULL_VALUE = {0};
+
+value null_value()
+{
+	return NULL_VALUE;
+}
+
+value int_value(int i)
+{
+	value r;
+	r.ival = i;
+	return r;
+}
+
+value str_value(char *s)
+{
+	value r;
+	if (s != NULL) {
+		memset((void *) r.strval, 0x0, 256);
+		memcpy(r.strval, s, strlen(s));
+	}
+	return r;
+}
+
+value double_value(double d)
+{
+	value r;
+	r.dval = d;
+	return r;
+}
+
+node *make_node(instruction ins, node *arg1, node *arg2, value val, type_decl *type)
 {
 	node *r;
 	if ((r = (node *) malloc(sizeof(node)))) {
 		r->ins = ins;
 		r->arg1 = arg1;
 		r->arg2 = arg2;
-		r->ival = ival;
-		if (strval != NULL) {
-			memcpy(r->strval, strval, strlen(strval));
-		}
+		r->val = val;
+		r->type = type;
 		return r;
 	}
-	printf("Failure in make_node");
+	printf("malloc failure in make_node");
 	exit(1);
 }
 
-node *const_integer(int val)
+node *const_integer_node(int val)
 {
-	return make_node(CONST_INTEGER, NULL, NULL, val, NULL);
+	return make_node(CONST_INTEGER, NULL, NULL, int_value(val), type_int());
 }
 
-node *const_double(double val)
+node *const_string_node(char *val)
 {
-	//node *n = make_node(CONST_DOUBLE, NULL, NULL, 0, NULL);
+	return make_node(CONST_STRING, NULL, NULL, str_value(val), type_array(type_char(), strlen(val)));
 }
 
-node *const_string(char *val)
+node *identifier_node(char *name)
 {
-	return make_node(CONST_STRING, NULL, NULL, 0, val);
-}
-
-node *identifier(char *name)
-{
-	return make_node(IDENTIFIER, NULL, NULL, 0, name);
+	return make_node(IDENTIFIER, NULL, NULL, str_value(name), type_void());
 }

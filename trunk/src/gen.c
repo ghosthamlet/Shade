@@ -62,6 +62,9 @@ void start_generation()
 	generate_func("section .text");
 	generate_line("global main");
 	generate_line("main:");
+	generate_line("push ebp");
+	generate_line("mov ebp,esp");
+	generate_line("sub esp,100");
 }
 void stop_generation()
 {
@@ -108,8 +111,10 @@ void compare(char *setname)
 void call_function(char *name)
 {
 	char sprintf_fodder[100];
-	sprintf(sprintf_fodder, "call %s", name);
+	debug("CALL_FUNCTION: %s", get_symbol_location(name));
+	sprintf(sprintf_fodder, "mov eax,[%s]", get_symbol_location(name));
 	generate_line(sprintf_fodder);
+	generate_line("call eax");
 	generate_line("push eax");
 }
 void assign_scalar(char *name)
@@ -133,7 +138,8 @@ void get_scalar(char *name)
 {
 	debug("get_scalar");
 	char sprintf_fodder[100];
-	sprintf(sprintf_fodder, "push dword [%s]", get_symbol_location(name));
+	symtab_entry *symdata = get_symbol_data(name);
+	sprintf(sprintf_fodder, "push dword [%s]", symdata->location);
 	generate_line(sprintf_fodder);
 }
 void get_vector(char *name)
@@ -141,32 +147,33 @@ void get_vector(char *name)
 	debug("get_vector");
 	char sprintf_fodder[100];
 	generate_line("pop eax");
-	sprintf(sprintf_fodder, "push dword [%s+eax*%d]", get_symbol_location(name), 4);
+	symtab_entry *symdata = get_symbol_data(name);
+	sprintf(sprintf_fodder, "push dword [%s+eax*%d]", symdata->location, symdata->type->abase->size);
 	generate_line(sprintf_fodder);
 }
-void declare_scalar(char *name, char *typecode, int size)
+void declare_scalar(char *name, type_decl *type)
 {
 	char sprintf_fodder[100];
-	if (FUNC_CONTEXT) {
-		BASE_OFFSET += size;
+	//if (FUNC_CONTEXT) {
+		BASE_OFFSET += type->size;
 		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET);
-	} else {
-		sprintf(sprintf_fodder, "%s: resb %d", name, size);
-		generate_bss(sprintf_fodder);
-		sprintf(sprintf_fodder, "%s", name);
-	}
-	new_symbol(name, typecode, sprintf_fodder, size);
+	//} else {
+	//	sprintf(sprintf_fodder, "%s: resb %d", name, type->size);
+	//	generate_bss(sprintf_fodder);
+	//	sprintf(sprintf_fodder, "%s", name);
+	//}
+	new_symbol(name, sprintf_fodder, type);
 }
-void declare_vector(char *name, char *typecode, int size)
+void declare_vector(char *name, type_decl *type)
 {
 	char sprintf_fodder[100];
-	if (FUNC_CONTEXT) {
-		BASE_OFFSET += size;
+	//if (FUNC_CONTEXT) {
+		BASE_OFFSET += type->size;
 		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET);
-	} else {
-		sprintf(sprintf_fodder, "%s: resb %d", name, size);
-		generate_bss(sprintf_fodder);
-		sprintf(sprintf_fodder, "%s", name);
-	}
-	new_symbol(name, typecode, sprintf_fodder, size);
+	//} else {
+	//	sprintf(sprintf_fodder, "%s: resb %d", name, type->size);
+	//	generate_bss(sprintf_fodder);
+	//	sprintf(sprintf_fodder, "%s", name);
+	//}
+	new_symbol(name, sprintf_fodder, type);
 }

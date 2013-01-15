@@ -4,11 +4,14 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include "type.h"
+#include "symtab.h"
+#include "debug.h"
+#include "utils.h"
 
 typedef enum instruction {
 	MAIN_PROGRAM,
 	STATEMENT_LIST,
-	STATEMENT,
 	BLOCK,
 	EXPRESSION_LIST,
 	EXTERNAL_FUNCTION,
@@ -41,18 +44,30 @@ typedef enum instruction {
 	GE
 } instruction;
 
+typedef union value {
+	int ival;
+	char strval[256];
+	double dval;
+} value;
+
 typedef struct node {
 	instruction ins;
 	struct node *arg1;
 	struct node *arg2;
-	int ival;
-	char strval[256];
-	double dval;
+	value val;
+	type_decl *type;
 } node;
 
-node *make_node(instruction ins, node *arg1, node *arg2, int val, char *strval);
-node *const_integer(int val);
-node *const_string(char *val);
-node *identifier(char *name);
+value null_value();
+value int_value(int i);
+value str_value(char *s);
+value double_value(double d);
+
+node *make_node(instruction ins, node *arg1, node *arg2, value val, type_decl *type);
+
+node *const_integer_node(int val);
+node *const_string_node(char *val);
+
+node *identifier_node(char *name);
 
 #endif

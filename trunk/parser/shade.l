@@ -4,7 +4,6 @@
 #include "type.h"
 #define TOKEN(t) yylval.token = t; return t
 //[0-9]+\.[0-9]*          yylval.node_t = const_double(atof(yytext)); return TDOUBLE;
-//"string"                yylval.type_t = type_string(); return TSTRING_T;
 %}
 
 %option noyywrap
@@ -20,9 +19,10 @@
 "while"                 TOKEN(TWHILE);
 "Integer"               yylval.type_t = type_int(); return TINTEGER_T;
 "Byte"                  yylval.type_t = type_char(); return TBYTE_T;
-[a-zA-Z_][a-zA-Z0-9_]*  yylval.node_t = identifier(yytext); return TIDENTIFIER;
-L?\"(\\.|[^\\"])*\"     yylval.node_t = const_string(yytext); return TSTRING;
-[0-9]+                  yylval.node_t = const_integer(atoi(yytext)); return TINTEGER;
+"Void"                  yylval.type_t = type_void(); return TVOID_T;
+[a-zA-Z_][a-zA-Z0-9_]*  yylval.node_t = identifier_node(yytext); return TIDENTIFIER;
+L?\"(\\.|[^\\"])*\"     yylval.node_t = const_string_node(yytext); return TSTRING;
+[0-9]+                  yylval.node_t = const_integer_node(atoi(yytext)); return TINTEGER;
 "->"                    TOKEN(TARROW);
 "="                     TOKEN(TEQUAL);
 "=="                    TOKEN(TCEQ);

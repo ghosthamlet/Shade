@@ -16,7 +16,8 @@ int main(int argc, char *argv[]) {
 	if (ROOT_NODE != NULL) {
 		parse_node(ROOT_NODE);
 		system("nasm -g -f elf a.out.asm");
-		system("gcc a.out.o");
+		system("ld -dynamic-linker /lib/ld-linux.so.2 /usr/lib/crt1.o /usr/lib/crti.o a.out.o -lc /usr/lib/crtn.o");
+		//system("gcc a.out.o");
 	}
 	return 0;
 }

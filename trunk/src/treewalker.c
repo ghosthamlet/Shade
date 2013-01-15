@@ -35,9 +35,6 @@ void parse_node(node *n) {
 				parse_node(n->arg1);
 			}
 			break;
-		case STATEMENT:
-			parse_node(n->arg1);
-			break;
 		case EXPRESSION_LIST:
 			debug("EXPRESSION_LIST");
 			if (n->arg1 != NULL) {
@@ -57,69 +54,91 @@ void parse_node(node *n) {
 			parse_node(n->arg1);
 			break;
 		case EXTERNAL_FUNCTION:
-			sprintf(sprintf_fodder, "extern %s", n->arg1->strval);
+			debug("EXTERNAL_FUNCTION: %s", n->arg1->val.strval);
+			sprintf(sprintf_fodder, "extern %s", n->arg1->val.strval);
 			generate_extern(sprintf_fodder);
+			declare_scalar(n->arg1->val.strval, n->type);
+			sprintf(sprintf_fodder, "push %s", n->arg1->val.strval);
+			generate_line(sprintf_fodder);
+			assign_scalar(n->arg1->val.strval);
 			break;
 		case DECLARE_FUNCTION:
-			sprintf(sprintf_fodder, "global %s\n%s:", n->arg1->strval, n->arg1->strval);
+			sprintf(sprintf_fodder, "global _%s\n_%s:", n->arg1->val.strval, n->arg1->val.strval);
 			generate_func(sprintf_fodder);
-			generate_func("push ebp\nmov ebp,esp\nsub esp,0x40");
+			declare_scalar(n->arg1->val.strval, n->type);
+			sprintf(sprintf_fodder, "push _%s", n->arg1->val.strval);
+			generate_line(sprintf_fodder);
+			assign_scalar(n->arg1->val.strval);
 			set_func_context(1);
 			push_symtab();
 			parse_node(n->arg2);
 			pop_symtab();
 			set_func_context(0);
-			generate_func("mov esp,ebp\npop ebp");
-			generate_func("ret");
+			break;
+		case IDENT_LIST:
+			temp1 = 8;
+			for (tempnode = n; tempnode != NULL; tempnode = tempnode->arg2) {
+				debug("IDENT_LIST: %s", tempnode->arg1->val.strval);
+				declare_scalar(tempnode->arg1->val.strval, tempnode->type);
+				sprintf(sprintf_fodder, "push dword [ebp+%d]", temp1);
+				generate_line(sprintf_fodder);
+				assign_scalar(tempnode->arg1->val.strval);
+				temp1 += tempnode->type->size;
+			}
 			break;
 		case FUNCTION_BODY:
+			generate_line("push ebp\nmov ebp,esp\nsub esp,0x40");
+			parse_node(n->arg1);
 			parse_node(n->arg2);
+			generate_line("mov esp,ebp\npop ebp");
+			generate_line("ret");
 			break;
 		case DECLARE_VECTOR:
 			debug("DECLARE_VECTOR");
-			declare_vector(n->arg1->strval, n->arg1->strval, n->ival);
+			declare_vector(n->arg1->val.strval, n->type);
 			break;
 		case DECLARE_SCALAR:
 			debug("DECLARE_SCALAR");
 			for (tempnode = n->arg1; tempnode != NULL; tempnode = tempnode->arg2) {
-				declare_scalar(tempnode->arg1->strval, tempnode->strval, tempnode->ival);
+				debug("name = %s", tempnode->arg1->val.strval);
+				declare_scalar(tempnode->arg1->val.strval, tempnode->type);
 			}
 			break;
 		case CONST_INTEGER:
-			debug("CONST_INTEGER: val=%d\n", n->ival);
-			push_int(n->ival);
+			debug("CONST_INTEGER: val=%d\n", n->val.ival);
+			push_int(n->val.ival);
 			break;
 		case CONST_DOUBLE:
 			//TODO: IMPLEMENT
-			//push_const_double(*((int *) (n->val)));
 			break;
 		case CONST_STRING:
-			debug("CONST_STRING: val=%s\n", n->strval);
-			push_string(n->strval);
+			debug("CONST_STRING: val=%s\n", n->val.strval);
+			push_string(n->val.strval);
 			break;
 		case GET_SCALAR:
 			debug("GET_SCALAR");
-			get_scalar(n->arg1->strval);
+			get_scalar(n->arg1->val.strval);
 			break;
 		case GET_VECTOR:
 			debug("GET_VECTOR");
 			parse_node(n->arg1->arg2);
-			get_vector(n->arg1->arg1->strval);
+			get_vector(n->arg1->arg1->val.strval);
 			break;
 		case CALL_FUNCTION:
+			debug("CALL_FUNCTION: %s", n->arg1->val.strval);
 			parse_node(n->arg2);
-			call_function(n->arg1->strval);
+			call_function(n->arg1->val.strval);
 			break;
 		case ASSIGN_SCALAR:
 			debug("ASSIGN_SCALAR");
 			parse_node(n->arg2);
-			assign_scalar(n->arg1->strval);
+			assign_scalar(n->arg1->val.strval);
 			break;
 		case ASSIGN_VECTOR:
 			debug("ASSIGN_VECTOR");
 			parse_node(n->arg1->arg2);
 			parse_node(n->arg2);
-			assign_vector(n->arg1->arg1->strval);
+			assign_vector(n->arg1->arg1->val.strval);
 			break;
 		case IF:
 			parse_node(n->arg1);

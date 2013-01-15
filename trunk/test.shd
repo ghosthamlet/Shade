@@ -1,8 +1,9 @@
-ext printf -> Integer;
-ext puts -> Integer;
+ext printf -> Void;
+ext puts -> Void;
 
 var y -> Integer, z -> Integer;
 var array -> Integer [10];
+var func -> (arg1 -> Integer, arg2 -> Integer) -> Integer;
 
 y = 10;
 z = 1;
@@ -10,17 +11,26 @@ z = 1;
 array[0] = 98;
 array[2] = 100;
 
-def f -> Integer {
-    var y -> Integer, z -> Integer;
+var string -> Byte [10];
+string = "bluhbluh";
+
+def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
+    ext printf -> Void;
+    var y -> Integer, z -> Integer, a -> Integer;
     y = 5;
     z = 0;
+    a = 15;
     if y == 5 {
-        if y != 6 {
-            printf("%d %d", y, z);
-        }
+        printf("%d %d %d %d %d", y, z, a, arg1, arg2);
+        if z {
+	    printf("Nope!");
+	}
     }
 }
 
-printf("%d %d %d", y, z, array[2]);
-f();
+func = f;
+
+printf("%d %d %d %d", y, z, array[0], array[2]);
+func(y, z);
 printf("%d %d", y, z);
+puts(string);

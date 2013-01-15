@@ -7,7 +7,7 @@
 	extern node *ROOT_NODE;
 %}
 
-%union value {
+%union token_val {
 	int token;
 	struct node *node_t;
 	struct type_decl *type_t;
@@ -19,7 +19,7 @@
 %token <node_t> TINTEGER
 %token <node_t> TSTRING
 
-%token <type_t> TINTEGER_T TBYTE_T
+%token <type_t> TINTEGER_T TBYTE_T TVOID_T
 
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
 %token <token> TLPAREN TRPAREN TLSQUARE TRSQUARE TLBRACE TRBRACE TCOMMA TSEMICOLON TDOT
@@ -35,7 +35,6 @@
 %type <node_t> program
 
 %type <node_t> expr
-%type <node_t> ident
 %type <node_t> numeric
 
 %type <node_t> stmt
@@ -45,6 +44,7 @@
 
 %type <type_t> scalar_type
 %type <type_t> vector_type
+%type <type_t> func_type
 %type <type_t> type
 
 %type <node_t> ident_list
@@ -68,111 +68,128 @@
 
 %%
 
-program : stmts {ROOT_NODE = make_node(MAIN_PROGRAM, $1, NULL, 0, NULL);}
+program : stmts {ROOT_NODE = make_node(MAIN_PROGRAM, $1, NULL, null_value(), type_void());}
 	;
 
-stmts : stmt {$$ = make_node(STATEMENT_LIST, $1, NULL, 0, NULL);}
-      | stmts stmt {$$ = make_node(STATEMENT_LIST, $2, $1, 0, NULL);}
+stmts : stmt {$$ = make_node(STATEMENT_LIST, $1, NULL, null_value(), type_void());}
+      | stmts stmt {$$ = make_node(STATEMENT_LIST, $2, $1, null_value(), type_void());}
       ;
 
-stmt : expr TSEMICOLON {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
-     | var_decl TSEMICOLON {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
-     | func_decl {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
-     | external_decl TSEMICOLON {$$ = make_node(STATEMENT, $1, NULL, 0, NULL);}
+stmt : expr TSEMICOLON {$$ = $1;}
+     | var_decl TSEMICOLON {$$ = $1;}
+     | func_decl {$$ = $1;}
+     | external_decl TSEMICOLON {$$ = $1;}
      | control_structure {$$ = $1;}
      | block {$$ = $1;}
      ;
 
-control_structure : TIF expr stmt {$$ = make_node(IF, $2, $3, 0, NULL);}
-		  | TWHILE expr stmt {$$ = make_node(WHILE, $2, $3, 0, NULL);}
+control_structure : TIF expr stmt {$$ = make_node(IF, $2, $3, null_value(), type_void());}
+		  | TWHILE expr stmt {$$ = make_node(WHILE, $2, $3, null_value(), type_void());}
 		  ;
 
-block : TLBRACE stmts TRBRACE {$$ = make_node(BLOCK, $2, NULL, 0, NULL);}
-      | TLBRACE TRBRACE {$$ = make_node(BLOCK, NULL, NULL, 0, NULL);}
+block : TLBRACE stmts TRBRACE {$$ = make_node(BLOCK, $2, NULL, null_value(), type_void());}
+      | TLBRACE TRBRACE {$$ = make_node(BLOCK, NULL, NULL, null_value(), type_void());}
       ;
 
 type : scalar_type {$$ = $1;} 
      | vector_type {$$ = $1;}
      ;
 
-ident_list : /*blank*/ {$$ = make_node(IDENT_LIST, NULL, NULL, 0, NULL);}
-	   | ident TARROW scalar_type {$$ = make_node(IDENT_LIST, $1, NULL, $3->size, $3->typecode);}
-	   | ident TARROW scalar_type TCOMMA ident_list {$$ = make_node(IDENT_LIST, $1, $5, $3->size, $3->typecode);}
+ident_list : /*blank*/ {$$ = make_node(IDENT_LIST, NULL, NULL, null_value(), type_void());}
+	   | TIDENTIFIER TARROW scalar_type {$$ = make_node(IDENT_LIST, $1, NULL, null_value(), $3);}
+	   | TIDENTIFIER TARROW scalar_type TCOMMA ident_list {$$ = make_node(IDENT_LIST, $1, $5, null_value(), $3);}
 	   ;
 
 scalar_type : TINTEGER_T {$$ = $1;}
 	    | TBYTE_T {$$ = $1;}
+	    | TVOID_T {$$ = $1;}
+	    | func_type {$$ = $1;}
 	    ;
 
-vector_type : type TLSQUARE TINTEGER TRSQUARE {$$ = type_array($1, $3->ival);}
+vector_type : type TLSQUARE TINTEGER TRSQUARE {$$ = type_array($1, $3->val.ival);}
 	    ;
 
-var_decl : TVAR ident_list {$$ = make_node(DECLARE_SCALAR, $2, NULL, 0, NULL);}
-	 | TVAR ident TARROW vector_type {$$ = make_node(DECLARE_VECTOR, $2, NULL, $4->size, NULL);}
+func_type : TLPAREN ident_list TRPAREN TARROW type {
+	  type_decl *type = type_func($5, 0);
+	  node *c;
+	  for (c = $2; c != NULL; c = c->arg2) {
+	  	insert_list(type->ftype->args, (void *) c->type);
+	  }
+	  $$ = type;
+	  }
 
-func_decl : TDEF ident ident_list TARROW scalar_type stmt {
-	  $2->ival = $5->size;
-	  $$ = make_node(DECLARE_FUNCTION, $2, make_node(FUNCTION_BODY, $3, $6, 0, NULL), 0, NULL);}
+var_decl : TVAR ident_list {$$ = make_node(DECLARE_SCALAR, $2, NULL, null_value(), type_void());}
+	 | TVAR TIDENTIFIER TARROW vector_type {$$ = make_node(DECLARE_VECTOR, $2, NULL, null_value(), $4);}
+
+func_decl : TDEF TIDENTIFIER TLPAREN ident_list TRPAREN TARROW type stmt {
+	  type_decl *type = type_func($7, 0);
+	  node *c;
+	  for (c = $4; c != NULL; c = c->arg2) {
+	  	insert_list(type->ftype->args, (void *) c->type);
+	  }
+	  $$ = make_node(DECLARE_FUNCTION, $2, make_node(FUNCTION_BODY, $4, $8, null_value(), type_void()), null_value(), type);}
 	  ;
 
-external_decl : TEXT ident ident_list TARROW scalar_type {
-	      $$ = make_node(EXTERNAL_FUNCTION, $2, NULL, 0, NULL);}
+external_decl : TEXT TIDENTIFIER ident_list TARROW scalar_type {
+	  	type_decl *type = type_func($5, 0);
+	  	node *c;
+	  	for (c = $3; c != NULL; c = c->arg2) {
+	  		insert_list(type->ftype->args, (void *) c->type);
+	  	}
+	      	$$ = make_node(EXTERNAL_FUNCTION, $2, NULL, null_value(), type);}
 	      ;
-
-ident : TIDENTIFIER {$$ = $1;}
-      ;
 
 numeric : TINTEGER {$$ = $1;}
 /*	| TDOUBLE {$$ = $1;}*/
 	;
 
-subscript_array : ident TLSQUARE expr TRSQUARE {$$ = make_node(SUBSCRIPT_ARRAY, $1, $3, 0, NULL);}
+subscript_array : TIDENTIFIER TLSQUARE expr TRSQUARE {$$ = make_node(SUBSCRIPT_ARRAY, $1, $3, null_value(), $1->type);}
 
-expr : ident {$$ = make_node(GET_SCALAR, $1, NULL, 0, NULL);}
-     | subscript_array {$$ = make_node(GET_VECTOR, $1, NULL, 0, NULL);}
-     | ident TLPAREN call_args TRPAREN {$$ = make_node(CALL_FUNCTION, $1, $3, 0, NULL);}
+expr : TIDENTIFIER {$$ = make_node(GET_SCALAR, $1, NULL, null_value(), type_void());}
+     | subscript_array {$$ = make_node(GET_VECTOR, $1, NULL, null_value(), type_void());}
+     | TIDENTIFIER TLPAREN call_args TRPAREN {$$ = make_node(CALL_FUNCTION, $1, $3, null_value(), type_void());}
      | numeric {$$ = $1;}
      | TSTRING {$$ = $1;}
-     | ident TEQUAL expr {$$ = make_node(ASSIGN_SCALAR, $1, $3, 0, NULL);}
-     | subscript_array TEQUAL expr {$$ = make_node(ASSIGN_VECTOR, $1, $3, 0, NULL);}
+     | TIDENTIFIER TEQUAL expr {$$ = make_node(ASSIGN_SCALAR, $1, $3, null_value(), $1->type);}
+     | subscript_array TEQUAL expr {$$ = make_node(ASSIGN_VECTOR, $1, $3, null_value(), $1->type);}
      | expr operator expr {switch ($2) {
 case TPLUS:
-	$$ = make_node(PLUS, $1, $3, 0, NULL);
+	$$ = make_node(PLUS, $1, $3, null_value(), $1->type);
 	break;
 case TMINUS:
-	$$ = make_node(MINUS, $1, $3, 0, NULL);
+	$$ = make_node(MINUS, $1, $3, null_value(), $1->type);
 	break;
 case TMUL:
-	$$ = make_node(MUL, $1, $3, 0, NULL);
+	$$ = make_node(MUL, $1, $3, null_value(), $1->type);
 	break;
 case TDIV:
-	$$ = make_node(DIV, $1, $3, 0, NULL);
+	$$ = make_node(DIV, $1, $3, null_value(), $1->type);
 	break;
 case TCEQ:
-	$$ = make_node(EQ, $1, $3, 0, NULL);
+	$$ = make_node(EQ, $1, $3, null_value(), $1->type);
 	break;
 case TCNE:
-	$$ = make_node(NE, $1, $3, 0, NULL);
+	$$ = make_node(NE, $1, $3, null_value(), $1->type);
 	break;
 case TCLT:
-	$$ = make_node(LT, $1, $3, 0, NULL);
+	$$ = make_node(LT, $1, $3, null_value(), $1->type);
 	break;
 case TCLE:
-	$$ = make_node(LE, $1, $3, 0, NULL);
+	$$ = make_node(LE, $1, $3, null_value(), $1->type);
 	break;
 case TCGT:
-	$$ = make_node(GT, $1, $3, 0, NULL);
+	$$ = make_node(GT, $1, $3, null_value(), $1->type);
 	break;
 case TCGE:
-	$$ = make_node(GE, $1, $3, 0, NULL);
+	$$ = make_node(GE, $1, $3, null_value(), $1->type);
 	break;
 };}
      | TLPAREN expr TRPAREN {$$ = $2;}
      ;
 
-call_args : /*blank*/  {$$ = make_node(EXPRESSION_LIST, NULL, NULL, 0, NULL);}
-	  | expr {$$ = make_node(EXPRESSION_LIST, $1, NULL, 0, NULL);}
-	  | call_args TCOMMA expr {$$ = make_node(EXPRESSION_LIST, $3, $1, 0, NULL);}
+call_args : /*blank*/  {$$ = make_node(EXPRESSION_LIST, NULL, NULL, null_value(), type_void());}
+	  | expr {$$ = make_node(EXPRESSION_LIST, $1, NULL, null_value(), type_void());}
+	  | call_args TCOMMA expr {$$ = make_node(EXPRESSION_LIST, $3, $1, null_value(), type_void());}
 	  ;
 
 operator : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE
