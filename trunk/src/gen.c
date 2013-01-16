@@ -16,6 +16,7 @@ int STRCOUNT = 0;
 int FUNC_CONTEXT = 0;
 int BASE_OFFSET_STACK_POINTER = 0;
 int BASE_OFFSET_STACK[256] = {0};
+int LAMBDA_CONTEXT = 0;
 void write_output(char *o)
 {
 	fprintf(OUTPUT, "%s\n", o);
@@ -30,10 +31,22 @@ void set_func_context(int c)
 		BASE_OFFSET_STACK_POINTER--;
 	}
 }
+void set_lambda_context(int c)
+{
+	if (c) {
+		LAMBDA_CONTEXT++;
+		BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER++] = 0;
+	} else {
+		LAMBDA_CONTEXT--;
+		BASE_OFFSET_STACK_POINTER--;
+	}
+}
 void generate_line(char *line)
 {
 	if (FUNC_CONTEXT) {
 		generate_func(line);
+	} else if (LAMBDA_CONTEXT) {
+		generate_lambda(line);
 	} else {
 		generate_code(line);
 	}
@@ -72,7 +85,7 @@ void start_generation()
 	LAMBDAS = fmemopen(__lambdas, 1024*1024, "w");
 	generate_data("section .data");
 	generate_bss("section .bss");
-	generate_func("section .text");
+	generate_lambda("section .text");
 	generate_line("global main");
 	generate_line("main:");
 	generate_line("push ebp");

@@ -10,6 +10,7 @@
 
 int IF_END_COUNT = 0;
 int LOOP_COUNT = 0;
+int LAMBDA_COUNT = 0;
 
 void parse_node(node *n) {
 	char sprintf_fodder[100];
@@ -61,6 +62,23 @@ void parse_node(node *n) {
 			sprintf(sprintf_fodder, "push %s", n->arg1->val.strval);
 			generate_line(sprintf_fodder);
 			assign_scalar(n->arg1->val.strval);
+			break;
+		case LAMBDA_EXPR:
+			sprintf(sprintf_fodder, "global _lambda_%d\n_lambda_%d:", LAMBDA_COUNT, LAMBDA_COUNT);
+			generate_lambda(sprintf_fodder);
+			set_lambda_context(1);
+			push_symtab();
+			generate_line("push ebp\nmov ebp,esp\nsub esp,0x40");
+			parse_node(n->arg1);
+			parse_node(n->arg2);
+			generate_line("pop eax");
+			generate_line("mov esp,ebp\npop ebp");
+			generate_line("ret");
+			pop_symtab();
+			set_lambda_context(0);
+			sprintf(sprintf_fodder, "push _lambda_%d", LAMBDA_COUNT);
+			generate_line(sprintf_fodder);
+			LAMBDA_COUNT++;
 			break;
 		case DECLARE_FUNCTION:
 			sprintf(sprintf_fodder, "global _%s\n_%s:", n->arg1->val.strval, n->arg1->val.strval);
@@ -129,8 +147,6 @@ void parse_node(node *n) {
 			parse_node(n->arg2);
 			parse_node(n->arg1);
 			call_function(n->arg1->val.strval);
-			break;
-		case LAMBDA_EXPR:
 			break;
 		case ASSIGN_SCALAR:
 			debug("ASSIGN_SCALAR");

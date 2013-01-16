@@ -4,6 +4,7 @@ ext puts () -> Void;
 var y -> Integer, z -> Integer;
 var array -> Integer [1000];
 var func -> (arg1 -> Integer, arg2 -> Integer) -> Integer;
+var func2 -> (arg1 -> Integer) -> Integer;
 
 y = 10;
 z = 1;
@@ -30,8 +31,10 @@ def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
 }
 
 func = f;
+func2 = lambda (arg1 -> Integer) -> Integer arg1+10;
 
 printf("%d %d %d %d", y, z, array[0], array[2]);
 printf("%d", func(y, z));
+printf("%d", func2(y));
 printf("%d %d", y, z);
 puts(string);

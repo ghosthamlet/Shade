@@ -7,6 +7,7 @@
 #include "debug.h"
 void write_output(char *o);
 void set_func_context(int c);
+void set_lambda_context(int c);
 void generate_line(char *line);
 void generate_code(char *line);
 void generate_data(char *line);
