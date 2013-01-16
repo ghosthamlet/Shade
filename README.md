@@ -11,7 +11,7 @@ Exciting things (really, advantages over C):
 * Static types, with a consistent postorder type syntax. For example, `x -> Integer` rather than `int x`. Some may complain about the more verbose type syntax, but to that my argument is that you really shouldn't be spending most of your time declaring variables, and if you are, you probably need to reevaluate your design :P)
 
 Current limitations:
-* There is no optimizer (but there will be soon: I'm gradually working through *Advanced Compiler Design and Implementation*.
+* There is no optimizer (but there will be soon: I'm gradually working through *Advanced Compiler Design and Implementation*).
 * No object model now, but that will change once I implement language-level hash tables (with syntactic sugar, because the lack of easily available hash maps is one of the main things I find annoying in C. Think Python style `{}`).
 * Still under rather heavy development.
 
