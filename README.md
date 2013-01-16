@@ -4,8 +4,9 @@ Shade - Language of champions!
 Shade is a compiled, [semi-]functional language that runs on x86.
 
 Exciting things (really, advantages over C):
-* Compiles to nice, *readable*, x86 assembly code (Intel syntax)!
+* Compiles to nice, *readable*, x86 assembly code (Intel syntax).
 * First-class functions, which opens the way for a nice standard library using higher-order programming.
+* Lambda expressions, with full type checking/C interoperability.
 * Easy interop with C, with type checking (a module system is on the way!)
 * Static types, with a consistent postorder type syntax. For example, `x -> Integer` rather than `int x`. Some may complain about the more verbose type syntax, but to that my argument is that you really shouldn't be spending most of your time declaring variables, and if you are, you probably need to reevaluate your design :P)
 
@@ -69,12 +70,13 @@ def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
 	    printf("Nope!");
 	}
     }
+    return 17;
 }
 
 func = f;
 
 printf("%d %d %d %d", y, z, array[0], array[2]);
-func(y, z);
+printf("%d", func(y, z));
 printf("%d %d", y, z);
 puts(string);
 ```
