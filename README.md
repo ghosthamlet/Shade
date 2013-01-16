@@ -3,6 +3,8 @@ Shade - Language of champions!
 
 Shade is a compiled, [semi-]functional language that runs on x86.
 
+By semi-functional, I mean similar in functional extent to Common Lisp, Python and Ruby. Not pure by any means.
+
 Exciting things (really, advantages over C):
 * Compiles to nice, *readable*, x86 assembly code (Intel syntax).
 * First-class functions, which opens the way for a nice standard library using higher-order programming.
