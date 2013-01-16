@@ -40,46 +40,7 @@ Syntax (currently implemented)
 
 Example
 -------
-
-```
-ext printf -> Void;
-ext puts -> Void;
-
-var y -> Integer, z -> Integer;
-var array -> Integer [10];
-var func -> (arg1 -> Integer, arg2 -> Integer) -> Integer;
-
-y = 10;
-z = 1;
-
-array[0] = 98;
-array[2] = 100;
-
-var string -> Byte [10];
-string = "bluhbluh";
-
-def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
-    ext printf -> Void;
-    var y -> Integer, z -> Integer, a -> Integer;
-    y = 5;
-    z = 0;
-    a = 15;
-    if y == 5 {
-        printf("%d %d %d %d %d", y, z, a, arg1, arg2);
-        if z {
-	    printf("Nope!");
-	}
-    }
-    return 17;
-}
-
-func = f;
-
-printf("%d %d %d %d", y, z, array[0], array[2]);
-printf("%d", func(y, z));
-printf("%d %d", y, z);
-puts(string);
-```
+Check out trunk/test.shd.
 
 License
 -------
