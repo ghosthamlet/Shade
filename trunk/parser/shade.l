@@ -17,6 +17,8 @@
 "ext"                   TOKEN(TEXT);
 "if"                    TOKEN(TIF);
 "while"                 TOKEN(TWHILE);
+"return"                TOKEN(TRETURN);
+"lambda"                TOKEN(TLAMBDA);
 "Integer"               yylval.type_t = type_int(); return TINTEGER_T;
 "Byte"                  yylval.type_t = type_char(); return TBYTE_T;
 "Void"                  yylval.type_t = type_void(); return TVOID_T;

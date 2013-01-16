@@ -64,8 +64,8 @@ symtab_entry *get_symbol_data(char *name)
 		if (((symtab_entry *) c->data) != NULL) {
 			if (strcmp(((symtab_entry *) c->data)->name, name) == 0) {
 				return (symtab_entry *) c->data;
-			} else debug("===fail 1=== (%s %s)", ((symtab_entry *) c->data)->name, name);
-		} else debug("===fail 2===");
+			}
+		}
 	}
 	log_err("undefined variable %s", name);
 	return NULL;

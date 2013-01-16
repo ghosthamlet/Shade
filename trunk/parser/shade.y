@@ -26,7 +26,8 @@
 %token <token> TPLUS TMINUS TMUL TDIV
 
 %token <token> TEXT TDEF TVAR
-%token <token> TIF TWHILE
+%token <token> TIF TWHILE TRETURN
+%token <token> TLAMBDA
 
 %token <token> TARROW
 
@@ -55,6 +56,8 @@
 
 %type <node_t> external_decl
 
+%type <node_t> lambda
+
 %type <node_t> subscript_array
 
 %type <node_t> call_args
@@ -80,6 +83,7 @@ stmt : expr TSEMICOLON {$$ = $1;}
      | func_decl {$$ = $1;}
      | external_decl TSEMICOLON {$$ = $1;}
      | control_structure {$$ = $1;}
+     | TRETURN expr TSEMICOLON {$$ = make_node(RETURN, $2, NULL, null_value(), type_void());}
      | block {$$ = $1;}
      ;
 
@@ -130,14 +134,24 @@ func_decl : TDEF TIDENTIFIER TLPAREN ident_list TRPAREN TARROW type stmt {
 	  $$ = make_node(DECLARE_FUNCTION, $2, make_node(FUNCTION_BODY, $4, $8, null_value(), type_void()), null_value(), type);}
 	  ;
 
-external_decl : TEXT TIDENTIFIER ident_list TARROW scalar_type {
-	  	type_decl *type = type_func($5, 0);
+external_decl : TEXT TIDENTIFIER TLPAREN ident_list TRPAREN TARROW type {
+	  	type_decl *type = type_func($7, 0);
 	  	node *c;
-	  	for (c = $3; c != NULL; c = c->arg2) {
+	  	for (c = $4; c != NULL; c = c->arg2) {
 	  		insert_list(type->ftype->args, (void *) c->type);
 	  	}
 	      	$$ = make_node(EXTERNAL_FUNCTION, $2, NULL, null_value(), type);}
 	      ;
+
+lambda : TLAMBDA TLPAREN ident_list TRPAREN TARROW type expr {
+       type_decl *type = type_func($6, 0);
+       node *c;
+       for (c = $3; c != NULL; c = c->arg2) {
+       insert_list(type->ftype->args, (void *) c->type);
+       }
+       $$ = make_node(LAMBDA_EXPR, $3, $7, null_value(), type);}
+       ;
+
 
 numeric : TINTEGER {$$ = $1;}
 /*	| TDOUBLE {$$ = $1;}*/
@@ -147,9 +161,10 @@ subscript_array : TIDENTIFIER TLSQUARE expr TRSQUARE {$$ = make_node(SUBSCRIPT_A
 
 expr : TIDENTIFIER {$$ = make_node(GET_SCALAR, $1, NULL, null_value(), type_void());}
      | subscript_array {$$ = make_node(GET_VECTOR, $1, NULL, null_value(), type_void());}
-     | TIDENTIFIER TLPAREN call_args TRPAREN {$$ = make_node(CALL_FUNCTION, $1, $3, null_value(), type_void());}
+     | expr TLPAREN call_args TRPAREN {$$ = make_node(CALL_FUNCTION, $1, $3, null_value(), type_void());}
      | numeric {$$ = $1;}
      | TSTRING {$$ = $1;}
+     | lambda {$$ = $1;} 
      | TIDENTIFIER TEQUAL expr {$$ = make_node(ASSIGN_SCALAR, $1, $3, null_value(), $1->type);}
      | subscript_array TEQUAL expr {$$ = make_node(ASSIGN_VECTOR, $1, $3, null_value(), $1->type);}
      | expr operator expr {switch ($2) {

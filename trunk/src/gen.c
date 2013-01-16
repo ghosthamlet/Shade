@@ -10,17 +10,25 @@ FILE *EXTERNS;
 char __externs[1024*1024];
 FILE *FUNCS;
 char __funcs[1024*1024];
+FILE *LAMBDAS;
+char __lambdas[1024*1024];
 int STRCOUNT = 0;
 int FUNC_CONTEXT = 0;
-int BASE_OFFSET = 0;
+int BASE_OFFSET_STACK_POINTER = 0;
+int BASE_OFFSET_STACK[256] = {0};
 void write_output(char *o)
 {
 	fprintf(OUTPUT, "%s\n", o);
 }
 void set_func_context(int c)
 {
-	FUNC_CONTEXT = c;
-	BASE_OFFSET = 0;
+	if (c) {
+		FUNC_CONTEXT++;
+		BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER++] = 0;
+	} else {
+		FUNC_CONTEXT--;
+		BASE_OFFSET_STACK_POINTER--;
+	}
 }
 void generate_line(char *line)
 {
@@ -50,6 +58,10 @@ void generate_func(char *line)
 {
 	fprintf(FUNCS, "%s\n", line);
 }
+void generate_lambda(char *line)
+{
+	fprintf(LAMBDAS, "%s\n", line);
+}
 void start_generation()
 {
 	DATA = fmemopen(__data, 1024*1024, "w");
@@ -57,6 +69,7 @@ void start_generation()
 	CODE = fmemopen(__code, 1024*1024, "w");
 	EXTERNS = fmemopen(__externs, 1024*1024, "w");
 	FUNCS = fmemopen(__funcs, 1024*1024, "w");
+	LAMBDAS = fmemopen(__lambdas, 1024*1024, "w");
 	generate_data("section .data");
 	generate_bss("section .bss");
 	generate_func("section .text");
@@ -75,6 +88,8 @@ void stop_generation()
 	write_output(__data);
 	fclose(BSS);
 	write_output(__bss);
+	fclose(LAMBDAS);
+	write_output(__lambdas);
 	fclose(FUNCS);
 	write_output(__funcs);
 	fclose(CODE);
@@ -110,12 +125,19 @@ void compare(char *setname)
 }
 void call_function(char *name)
 {
-	char sprintf_fodder[100];
-	debug("CALL_FUNCTION: %s", get_symbol_location(name));
-	sprintf(sprintf_fodder, "mov eax,[%s]", get_symbol_location(name));
-	generate_line(sprintf_fodder);
+	generate_line("pop eax");
 	generate_line("call eax");
 	generate_line("push eax");
+}
+void return_statement()
+{
+	if (FUNC_CONTEXT) {
+		generate_line("pop eax");
+		generate_line("mov esp,ebp\npop ebp");
+		generate_line("ret");
+	} else {
+		log_err("return outside of function");
+	}
 }
 void assign_scalar(char *name)
 {
@@ -155,8 +177,8 @@ void declare_scalar(char *name, type_decl *type)
 {
 	char sprintf_fodder[100];
 	//if (FUNC_CONTEXT) {
-		BASE_OFFSET += type->size;
-		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET);
+		BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER] += type->size;
+		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER]);
 	//} else {
 	//	sprintf(sprintf_fodder, "%s: resb %d", name, type->size);
 	//	generate_bss(sprintf_fodder);
@@ -168,8 +190,8 @@ void declare_vector(char *name, type_decl *type)
 {
 	char sprintf_fodder[100];
 	//if (FUNC_CONTEXT) {
-		BASE_OFFSET += type->size;
-		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET);
+		BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER] += type->size;
+		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER]);
 	//} else {
 	//	sprintf(sprintf_fodder, "%s: resb %d", name, type->size);
 	//	generate_bss(sprintf_fodder);

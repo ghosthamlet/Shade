@@ -127,7 +127,10 @@ void parse_node(node *n) {
 		case CALL_FUNCTION:
 			debug("CALL_FUNCTION: %s", n->arg1->val.strval);
 			parse_node(n->arg2);
+			parse_node(n->arg1);
 			call_function(n->arg1->val.strval);
+			break;
+		case LAMBDA_EXPR:
 			break;
 		case ASSIGN_SCALAR:
 			debug("ASSIGN_SCALAR");
@@ -166,6 +169,10 @@ void parse_node(node *n) {
 			generate_line(sprintf_fodder);
 			sprintf(sprintf_fodder, "__end%d:", temp1);
 			generate_line(sprintf_fodder);
+			break;
+		case RETURN:
+			parse_node(n->arg1);
+			return_statement();
 			break;
 		case PLUS:
 			BIN_OP("add");

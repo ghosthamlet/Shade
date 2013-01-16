@@ -1,8 +1,8 @@
-ext printf -> Void;
-ext puts -> Void;
+ext printf () -> Void;
+ext puts () -> Void;
 
 var y -> Integer, z -> Integer;
-var array -> Integer [10];
+var array -> Integer [1000];
 var func -> (arg1 -> Integer, arg2 -> Integer) -> Integer;
 
 y = 10;
@@ -15,7 +15,7 @@ var string -> Byte [10];
 string = "bluhbluh";
 
 def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
-    ext printf -> Void;
+    ext printf () -> Void;
     var y -> Integer, z -> Integer, a -> Integer;
     y = 5;
     z = 0;
@@ -26,11 +26,12 @@ def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
 	    printf("Nope!");
 	}
     }
+    return 17;
 }
 
 func = f;
 
 printf("%d %d %d %d", y, z, array[0], array[2]);
-func(y, z);
+printf("%d", func(y, z));
 printf("%d %d", y, z);
 puts(string);
