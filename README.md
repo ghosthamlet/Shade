@@ -13,7 +13,7 @@ Exciting things (really, advantages over C):
 Current limitations:
 * There is no optimizer (but there will be soon: I'm gradually working through *Advanced Compiler Design and Implementation*).
 * No object model now, but that will change once I implement language-level hash tables (with syntactic sugar, because the lack of easily available hash maps is one of the main things I find annoying in C. Think Python style `{}`).
-* Still under rather heavy development.
+* Still under rather heavy development (internally, it's rather messy).
 
 Installation
 ------------
