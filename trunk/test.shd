@@ -3,8 +3,7 @@ ext puts () -> Void;
 
 var y -> Integer, z -> Integer;
 var array -> Integer [1000];
-var func -> (arg1 -> Integer, arg2 -> Integer) -> Integer;
-var func2 -> (arg1 -> Integer) -> Integer;
+var func -> (arg1 -> Integer, arg2 -> Integer) -> (arg1 -> Integer) -> Integer;
 
 y = 10;
 z = 1;
@@ -15,7 +14,7 @@ array[2] = 100;
 var string -> Byte [10];
 string = "bluhbluh";
 
-def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
+def f (arg1 -> Integer, arg2 -> Integer) -> (arg1 -> Integer) -> Integer {
     ext printf () -> Void;
     var y -> Integer, z -> Integer, a -> Integer;
     y = 5;
@@ -27,14 +26,12 @@ def f (arg1 -> Integer, arg2 -> Integer) -> Integer {
 	    printf("Nope!");
 	}
     }
-    return 17;
+    return lambda (arg1 -> Integer) -> Integer arg1 + 10;
 }
 
 func = f;
-func2 = lambda (arg1 -> Integer) -> Integer arg1+10;
 
 printf("%d %d %d %d", y, z, array[0], array[2]);
-printf("%d", func(y, z));
-printf("%d", func2(y));
+printf("%d", func(y, z)(10));
 printf("%d %d", y, z);
 puts(string);

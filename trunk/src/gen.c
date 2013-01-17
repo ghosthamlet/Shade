@@ -43,10 +43,10 @@ void set_lambda_context(int c)
 }
 void generate_line(char *line)
 {
-	if (FUNC_CONTEXT) {
-		generate_func(line);
-	} else if (LAMBDA_CONTEXT) {
+	if (LAMBDA_CONTEXT) {
 		generate_lambda(line);
+	} else if (FUNC_CONTEXT) {
+		generate_func(line);
 	} else {
 		generate_code(line);
 	}
