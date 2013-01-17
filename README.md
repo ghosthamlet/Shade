@@ -35,7 +35,8 @@ Syntax (currently implemented)
 * Variables: `var <name> -> <type> [, <name> -> <type>]* ;`. Example: `var x -> Integer, y -> Byte;` declares variables `x` and `y` as types `Integer` and `Byte`, respectively.
 * Arrays: `var <name> -> <type> [<integer>] ;` Please note that those are literal brackets, rather then denoting an optional syntactic element. Example: `var array -> Integer [10];` declares an array named `array` of 10 integers.
 * External Functions: `ext <name> -> <type>;`. Declares a function defined in an external library. Right now, command line option support is nonexistent (I'll mess with getopt in the future, I promise!), so you only link with `libc`, but the support is there. Right now, this essentially lets you say `ext printf -> Integer;` so you can call `printf`.
-* Function Definitions: `def <name> [<name> -> <type>]* -> <type> <statement>`. `def foo (arg -> Integer) -> Void { var x -> Integer; x = 1; printf("%d", arg + x); }`.
+* Function Definitions: `def <name> ([<name> -> <type>]*) -> <type> <statement>`. `def foo (arg -> Integer) -> Void { var x -> Integer; x = 1; printf("%d", arg + x); }`.
+* Lambdas : `lambda ([<name> -> <type>]*) -> <type> <expr>`. Defines an anonymous function, and returns it.
 * Return Statements: `return <expr> ;`. Sort of obvious, but including it just so there are no assumptions about potential Lisp-style returns.
 * Conditionals: `if <expr> <statement>`. Evaluates the first expression, if it isn't equal to zero evaluate the statement. Else blocks coming soon!.
 * Loops: `while <expr> <statement>`. Loops as long as the first expression is true, evaluating statement as the loop body.
