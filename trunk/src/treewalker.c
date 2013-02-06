@@ -1,12 +1,12 @@
 #include "treewalker.h"
 
 #define BIN_OP(op) \
+	generate_line("push ebx");\
 	parse_node(n->arg2);\
+	generate_line("mov ebx, eax");\
 	parse_node(n->arg1);\
-	generate_line("pop eax");\
-	generate_line("pop ebx");\
-	generate_line(op " eax,ebx");\
-	generate_line("push eax")
+	generate_line(op " eax, ebx");\
+	generate_line("pop ebx");
 
 int IF_END_COUNT = 0;
 int LOOP_COUNT = 0;
@@ -41,6 +41,7 @@ void parse_node(node *n) {
 			if (n->arg1 != NULL) {
 				debug("n->arg1->ins=%d", n->arg1->ins);
 				parse_node(n->arg1);
+				generate_line("push eax");
 			}
 			if (n->arg2 != NULL) {
 				debug("n->arg2->ins=%d", n->arg2->ins);
@@ -59,7 +60,7 @@ void parse_node(node *n) {
 			sprintf(sprintf_fodder, "extern %s", n->arg1->val.strval);
 			generate_extern(sprintf_fodder);
 			declare_scalar(n->arg1->val.strval, n->type);
-			sprintf(sprintf_fodder, "push %s", n->arg1->val.strval);
+			sprintf(sprintf_fodder, "mov eax, %s", n->arg1->val.strval);
 			generate_line(sprintf_fodder);
 			assign_scalar(n->arg1->val.strval);
 			break;
@@ -71,12 +72,11 @@ void parse_node(node *n) {
 			generate_line("push ebp\nmov ebp,esp\nsub esp,0x40");
 			parse_node(n->arg1);
 			parse_node(n->arg2);
-			generate_line("pop eax");
 			generate_line("mov esp,ebp\npop ebp");
 			generate_line("ret");
 			pop_symtab();
 			set_lambda_context(0);
-			sprintf(sprintf_fodder, "push _lambda_%d", LAMBDA_COUNT);
+			sprintf(sprintf_fodder, "mov eax, _lambda_%d", LAMBDA_COUNT);
 			generate_line(sprintf_fodder);
 			LAMBDA_COUNT++;
 			break;
@@ -84,7 +84,7 @@ void parse_node(node *n) {
 			sprintf(sprintf_fodder, "global _%s\n_%s:", n->arg1->val.strval, n->arg1->val.strval);
 			generate_func(sprintf_fodder);
 			declare_scalar(n->arg1->val.strval, n->type);
-			sprintf(sprintf_fodder, "push _%s", n->arg1->val.strval);
+			sprintf(sprintf_fodder, "mov eax, _%s", n->arg1->val.strval);
 			generate_line(sprintf_fodder);
 			assign_scalar(n->arg1->val.strval);
 			set_func_context(1);
@@ -98,7 +98,7 @@ void parse_node(node *n) {
 			for (tempnode = n; tempnode != NULL; tempnode = tempnode->arg2) {
 				debug("IDENT_LIST: %s", tempnode->arg1->val.strval);
 				declare_scalar(tempnode->arg1->val.strval, tempnode->type);
-				sprintf(sprintf_fodder, "push dword [ebp+%d]", temp1);
+				sprintf(sprintf_fodder, "mov eax, dword [ebp+%d]", temp1);
 				generate_line(sprintf_fodder);
 				assign_scalar(tempnode->arg1->val.strval);
 				temp1 += tempnode->type->size;
@@ -144,9 +144,12 @@ void parse_node(node *n) {
 			break;
 		case CALL_FUNCTION:
 			debug("CALL_FUNCTION: %s", n->arg1->val.strval);
+			generate_line("push ebx");
 			parse_node(n->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg1);
 			call_function(n->arg1->val.strval);
+			generate_line("pop ebx");
 			break;
 		case ASSIGN_SCALAR:
 			debug("ASSIGN_SCALAR");
@@ -155,13 +158,15 @@ void parse_node(node *n) {
 			break;
 		case ASSIGN_VECTOR:
 			debug("ASSIGN_VECTOR");
+			generate_line("push ebx");
 			parse_node(n->arg1->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg2);
 			assign_vector(n->arg1->arg1->val.strval);
+			generate_line("pop ebx");
 			break;
 		case IF:
 			parse_node(n->arg1);
-			generate_line("pop eax");
 			generate_line("cmp eax, 0");
 			//We increment IF_END_COUNT here so we can nest these.
 			temp1 = IF_END_COUNT;
@@ -176,7 +181,6 @@ void parse_node(node *n) {
 			sprintf(sprintf_fodder, "__start%d:", LOOP_COUNT++);
 			generate_line(sprintf_fodder);
 			parse_node(n->arg1);
-			generate_line("pop eax");
 			generate_line("cmp eax, 0");
 			sprintf(sprintf_fodder, "jz __end%d", temp1);
 			generate_line(sprintf_fodder);
@@ -203,34 +207,52 @@ void parse_node(node *n) {
 			BIN_OP("idiv");
 			break;
 		case EQ:
+			generate_line("push ebx");
 			parse_node(n->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg1);
 			compare("sete");
+			generate_line("pop eax");
 			break;
 		case NE:
+			generate_line("push ebx");
 			parse_node(n->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg1);
 			compare("setne");
+			generate_line("pop eax");
 			break;
 		case LT:
+			generate_line("push ebx");
 			parse_node(n->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg1);
 			compare("setl");
+			generate_line("pop eax");
 			break;
 		case LE:
+			generate_line("push ebx");
 			parse_node(n->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg1);
 			compare("setle");
+			generate_line("pop eax");
 			break;
 		case GT:
+			generate_line("push ebx");
 			parse_node(n->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg1);
 			compare("setg");
+			generate_line("pop eax");
 			break;
 		case GE:
+			generate_line("push ebx");
 			parse_node(n->arg2);
+			generate_line("mov ebx, eax");
 			parse_node(n->arg1);
 			compare("setge");
+			generate_line("pop eax");
 			break;
 	}
 }

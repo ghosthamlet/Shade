@@ -113,7 +113,7 @@ void stop_generation()
 void push_int(int i)
 {
 	char sprintf_fodder[100];
-	sprintf(sprintf_fodder, "push %d", i);
+	sprintf(sprintf_fodder, "mov eax, %d", i);
 	generate_line(sprintf_fodder);
 }
 void push_string(char *s)
@@ -121,31 +121,25 @@ void push_string(char *s)
 	char sprintf_fodder[100];
 	sprintf(sprintf_fodder, "__str%d: db %s,10,0", STRCOUNT, s);
 	generate_data(sprintf_fodder);
-	sprintf(sprintf_fodder, "push __str%d", STRCOUNT);
+	sprintf(sprintf_fodder, "mov eax, __str%d", STRCOUNT);
 	generate_line(sprintf_fodder);
 	STRCOUNT++;
 }
 void compare(char *setname)
 {
 	char sprintf_fodder[100];
-	generate_line("pop eax");
-	generate_line("pop ebx");
 	generate_line("cmp eax,ebx");
 	sprintf(sprintf_fodder, "%s al", setname);
 	generate_line(sprintf_fodder);
 	generate_line("movsx eax,al");
-	generate_line("push eax");
 }
 void call_function(char *name)
 {
-	generate_line("pop eax");
 	generate_line("call eax");
-	generate_line("push eax");
 }
 void return_statement()
 {
 	if (FUNC_CONTEXT) {
-		generate_line("pop eax");
 		generate_line("mov esp,ebp\npop ebp");
 		generate_line("ret");
 	} else {
@@ -155,35 +149,29 @@ void return_statement()
 void assign_scalar(char *name)
 {
 	char sprintf_fodder[100];
-	generate_line("pop eax");
 	sprintf(sprintf_fodder, "mov dword [%s],eax", get_symbol_location(name));
 	generate_line(sprintf_fodder);
-	generate_line("push eax");
 }
 void assign_vector(char *name)
 {
 	char sprintf_fodder[100];
-	generate_line("pop eax");
-	generate_line("pop ebx");
 	sprintf(sprintf_fodder, "mov [%s+ebx*%d], eax", get_symbol_location(name), 4);
 	generate_line(sprintf_fodder);
-	generate_line("push eax");
 }
 void get_scalar(char *name)
 {
 	debug("get_scalar");
 	char sprintf_fodder[100];
 	symtab_entry *symdata = get_symbol_data(name);
-	sprintf(sprintf_fodder, "push dword [%s]", symdata->location);
+	sprintf(sprintf_fodder, "mov eax, dword [%s]", symdata->location);
 	generate_line(sprintf_fodder);
 }
 void get_vector(char *name)
 {
 	debug("get_vector");
 	char sprintf_fodder[100];
-	generate_line("pop eax");
 	symtab_entry *symdata = get_symbol_data(name);
-	sprintf(sprintf_fodder, "push dword [%s+eax*%d]", symdata->location, symdata->type->abase->size);
+	sprintf(sprintf_fodder, "mov eax, dword [%s+eax*%d]", symdata->location, symdata->type->abase->size);
 	generate_line(sprintf_fodder);
 }
 void declare_scalar(char *name, type_decl *type)

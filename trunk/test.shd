@@ -2,7 +2,7 @@ ext printf () -> Void;
 ext puts () -> Void;
 
 var y -> Integer, z -> Integer;
-var array -> Integer [1000];
+var array -> Integer [10];
 var func -> (arg1 -> Integer, arg2 -> Integer) -> (arg1 -> Integer) -> Integer;
 
 y = 10;
