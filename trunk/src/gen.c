@@ -174,29 +174,10 @@ void get_vector(char *name)
 	sprintf(sprintf_fodder, "mov eax, dword [%s+eax*%d]", symdata->location, symdata->type->abase->size);
 	generate_line(sprintf_fodder);
 }
-void declare_scalar(char *name, type_decl *type)
+void declare_var(char *name, type_decl *type)
 {
 	char sprintf_fodder[100];
-	//if (FUNC_CONTEXT) {
-		BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER] += type->size;
-		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER]);
-	//} else {
-	//	sprintf(sprintf_fodder, "%s: resb %d", name, type->size);
-	//	generate_bss(sprintf_fodder);
-	//	sprintf(sprintf_fodder, "%s", name);
-	//}
-	new_symbol(name, sprintf_fodder, type);
-}
-void declare_vector(char *name, type_decl *type)
-{
-	char sprintf_fodder[100];
-	//if (FUNC_CONTEXT) {
-		BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER] += type->size;
-		sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER]);
-	//} else {
-	//	sprintf(sprintf_fodder, "%s: resb %d", name, type->size);
-	//	generate_bss(sprintf_fodder);
-	//	sprintf(sprintf_fodder, "%s", name);
-	//}
+	BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER] += type->size;
+	sprintf(sprintf_fodder, "ebp-%d", BASE_OFFSET_STACK[BASE_OFFSET_STACK_POINTER]);
 	new_symbol(name, sprintf_fodder, type);
 }

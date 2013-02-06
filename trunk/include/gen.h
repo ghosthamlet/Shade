@@ -29,6 +29,5 @@ void assign_scalar(char *name);
 void assign_vector(char *name );
 void get_scalar(char *name);
 void get_vector(char *name);
-void declare_scalar(char *name, type_decl *type);
-void declare_vector(char *name, type_decl *type);
+void declare_var(char *name, type_decl *type);
 #endif

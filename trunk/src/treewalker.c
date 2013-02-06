@@ -59,7 +59,7 @@ void parse_node(node *n) {
 			debug("EXTERNAL_FUNCTION: %s", n->arg1->val.strval);
 			sprintf(sprintf_fodder, "extern %s", n->arg1->val.strval);
 			generate_extern(sprintf_fodder);
-			declare_scalar(n->arg1->val.strval, n->type);
+			declare_var(n->arg1->val.strval, n->type);
 			sprintf(sprintf_fodder, "mov eax, %s", n->arg1->val.strval);
 			generate_line(sprintf_fodder);
 			assign_scalar(n->arg1->val.strval);
@@ -83,7 +83,7 @@ void parse_node(node *n) {
 		case DECLARE_FUNCTION:
 			sprintf(sprintf_fodder, "global _%s\n_%s:", n->arg1->val.strval, n->arg1->val.strval);
 			generate_func(sprintf_fodder);
-			declare_scalar(n->arg1->val.strval, n->type);
+			declare_var(n->arg1->val.strval, n->type);
 			sprintf(sprintf_fodder, "mov eax, _%s", n->arg1->val.strval);
 			generate_line(sprintf_fodder);
 			assign_scalar(n->arg1->val.strval);
@@ -97,7 +97,7 @@ void parse_node(node *n) {
 			temp1 = 8;
 			for (tempnode = n; tempnode != NULL; tempnode = tempnode->arg2) {
 				debug("IDENT_LIST: %s", tempnode->arg1->val.strval);
-				declare_scalar(tempnode->arg1->val.strval, tempnode->type);
+				declare_var(tempnode->arg1->val.strval, tempnode->type);
 				sprintf(sprintf_fodder, "mov eax, dword [ebp+%d]", temp1);
 				generate_line(sprintf_fodder);
 				assign_scalar(tempnode->arg1->val.strval);
@@ -111,15 +111,11 @@ void parse_node(node *n) {
 			generate_line("mov esp,ebp\npop ebp");
 			generate_line("ret");
 			break;
-		case DECLARE_VECTOR:
-			debug("DECLARE_VECTOR");
-			declare_vector(n->arg1->val.strval, n->type);
-			break;
-		case DECLARE_SCALAR:
-			debug("DECLARE_SCALAR");
+		case DECLARE_VAR:
+			debug("DECLARE_VAR");
 			for (tempnode = n->arg1; tempnode != NULL; tempnode = tempnode->arg2) {
 				debug("name = %s", tempnode->arg1->val.strval);
-				declare_scalar(tempnode->arg1->val.strval, tempnode->type);
+				declare_var(tempnode->arg1->val.strval, tempnode->type);
 			}
 			break;
 		case CONST_INTEGER:

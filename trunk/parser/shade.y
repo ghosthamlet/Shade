@@ -30,6 +30,7 @@
 %token <token> TLAMBDA
 
 %token <token> TARROW
+%token <token> TDCOLON
 
 %type <token> operator
 
@@ -100,8 +101,8 @@ type : scalar_type {$$ = $1;}
      ;
 
 ident_list : /*blank*/ {$$ = make_node(IDENT_LIST, NULL, NULL, null_value(), type_void());}
-	   | TIDENTIFIER TARROW scalar_type {$$ = make_node(IDENT_LIST, $1, NULL, null_value(), $3);}
-	   | TIDENTIFIER TARROW scalar_type TCOMMA ident_list {$$ = make_node(IDENT_LIST, $1, $5, null_value(), $3);}
+	   | TIDENTIFIER TDCOLON type {$$ = make_node(IDENT_LIST, $1, NULL, null_value(), $3);}
+	   | TIDENTIFIER TDCOLON type TCOMMA ident_list {$$ = make_node(IDENT_LIST, $1, $5, null_value(), $3);}
 	   ;
 
 scalar_type : TINTEGER_T {$$ = $1;}
@@ -122,8 +123,8 @@ func_type : TLPAREN ident_list TRPAREN TARROW type {
 	  $$ = type;
 	  }
 
-var_decl : TVAR ident_list {$$ = make_node(DECLARE_SCALAR, $2, NULL, null_value(), type_void());}
-	 | TVAR TIDENTIFIER TARROW vector_type {$$ = make_node(DECLARE_VECTOR, $2, NULL, null_value(), $4);}
+var_decl : TVAR ident_list {$$ = make_node(DECLARE_VAR, $2, NULL, null_value(), type_void());}
+	 ;
 
 func_decl : TDEF TIDENTIFIER TLPAREN ident_list TRPAREN TARROW type stmt {
 	  type_decl *type = type_func($7, 0);

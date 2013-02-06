@@ -1,9 +1,9 @@
 ext printf () -> Void;
 ext puts () -> Void;
 
-var y -> Integer, z -> Integer;
-var array -> Integer [10];
-var func -> (arg1 -> Integer, arg2 -> Integer) -> (arg1 -> Integer) -> Integer;
+var y :: Integer, z :: Integer;
+var array :: Integer [10];
+var func :: (arg1 :: Integer, arg2 :: Integer) -> (arg1 :: Integer) -> Integer;
 
 y = 10;
 z = 1;
@@ -11,12 +11,12 @@ z = 1;
 array[0] = 98;
 array[2] = 100;
 
-var string -> Byte [10];
+var string :: Byte [10];
 string = "bluhbluh";
 
-def f (arg1 -> Integer, arg2 -> Integer) -> (arg1 -> Integer) -> Integer {
+def f (arg1 :: Integer, arg2 :: Integer) -> (arg1 :: Integer) -> Integer {
     ext printf () -> Void;
-    var y -> Integer, z -> Integer, a -> Integer;
+    var y :: Integer, z :: Integer, a :: Integer;
     y = 5;
     z = 0;
     a = 15;
@@ -26,7 +26,7 @@ def f (arg1 -> Integer, arg2 -> Integer) -> (arg1 -> Integer) -> Integer {
 	    printf("Nope!");
 	}
     }
-    return lambda (arg1 -> Integer) -> Integer arg1 + 10;
+    return lambda (arg1 :: Integer) -> Integer arg1 + 10;
 }
 
 func = f;

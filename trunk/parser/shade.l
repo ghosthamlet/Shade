@@ -26,6 +26,7 @@
 L?\"(\\.|[^\\"])*\"     yylval.node_t = const_string_node(yytext); return TSTRING;
 [0-9]+                  yylval.node_t = const_integer_node(atoi(yytext)); return TINTEGER;
 "->"                    TOKEN(TARROW);
+"::"                    TOKEN(TDCOLON);
 "="                     TOKEN(TEQUAL);
 "=="                    TOKEN(TCEQ);
 "!="                    TOKEN(TCNE);
