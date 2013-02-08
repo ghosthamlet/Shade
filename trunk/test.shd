@@ -24,10 +24,10 @@ def f (arg1 :: Integer, arg2 :: Integer) -> (arg1 :: Integer) -> Integer {
         printf("%d %d %d %d %d", y, z, a, arg1, arg2);
         if z {
 	    printf("Nope!");
-	}
-    }
+	};
+    };
     return lambda (arg1 :: Integer) -> Integer arg1 + 10;
-}
+};
 
 func = f;
 
